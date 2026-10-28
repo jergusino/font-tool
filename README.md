@@ -36,3 +36,19 @@ Fonts, in `assets/`:
 Licences: Borisna is a demo font, free for private, non-profit use only. Before you sell
 anything through this list, buy the commercial licence from Koplexs Studio.
 Slithen shipped with web-font files; confirm your licence covers web use.
+
+## Sending from no-reply@jergusino.com (optional)
+
+Gmail can't send from a custom-domain address by itself, so the script can send
+through Brevo's free plan (300 emails a day) instead:
+
+1. Create a free Brevo account, add **jergusino.com** under Senders, Domains & IPs,
+   and add the DNS records Brevo shows (DKIM, DMARC, Brevo code) at your domain registrar.
+2. Brevo → SMTP & API → API keys → generate a key.
+3. Apps Script → Project Settings → Script properties:
+   - `BREVO_API_KEY` = the key (never paste it into Code.gs: this repo is public)
+   - `SENDER_EMAIL` = `no-reply@jergusino.com`
+   - `REPLY_TO` = your real inbox, so "reply unsubscribe" still reaches you
+4. Run `testSetup` once, then Deploy → Manage deployments → New version.
+
+Without `BREVO_API_KEY`, or if Brevo fails, emails are sent from the Google account as before.

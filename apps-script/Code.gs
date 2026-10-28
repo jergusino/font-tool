@@ -122,7 +122,41 @@ function sendConfirmation(email, token) {
     '<p style="margin:0 0 24px"><a href="' + link + '" style="display:inline-block;border:2px solid #FAF1D6;padding:14px 22px;color:#FAF1D6;text-decoration:none;font-size:17px">Yes, send me the files <span style="color:#FFC600">&rarr;</span></a></p>' +
     '<p style="margin:0;font-size:14px;line-height:1.5;color:#FAF1D6">The link works for ' + LINK_HOURS + ' hours. If this wasn’t you, ignore this email and nothing happens.</p>' +
     '</div>';
-  MailApp.sendEmail({ to: email, subject: "Confirm your email to get the free files", body: text, htmlBody: html, name: FROM_NAME });
+  sendMail(email, "Confirm your email to get the free files", text, html);
+}
+
+/**
+ * Sends one email.
+ * - If a Brevo API key is saved (Project Settings → Script properties → BREVO_API_KEY),
+ *   it sends from SENDER_EMAIL (e.g. no-reply@jergusino.com) through Brevo.
+ * - Otherwise, or if Brevo fails, it falls back to sending from this Google account.
+ * Replies go to REPLY_TO, if set, so "reply unsubscribe" still reaches you.
+ * Keys live in Script properties, never in this file, because this file is public on GitHub.
+ */
+function sendMail(to, subject, text, html) {
+  const props = PropertiesService.getScriptProperties();
+  const key = props.getProperty("BREVO_API_KEY");
+  const sender = props.getProperty("SENDER_EMAIL") || "no-reply@jergusino.com";
+  const replyTo = props.getProperty("REPLY_TO");
+
+  if (key) {
+    const payload = { sender: { name: FROM_NAME, email: sender }, to: [{ email: to }], subject: subject, htmlContent: html, textContent: text };
+    if (replyTo) payload.replyTo = { email: replyTo };
+    const res = UrlFetchApp.fetch("https://api.brevo.com/v3/smtp/email", {
+      method: "post",
+      contentType: "application/json",
+      headers: { "api-key": key, accept: "application/json" },
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true,
+    });
+    if (res.getResponseCode() < 300) return "brevo";
+    console.error("Brevo refused the email (" + res.getResponseCode() + "): " + res.getContentText() + " — sending from Gmail instead.");
+  }
+
+  const opts = { to: to, subject: subject, body: text, htmlBody: html, name: FROM_NAME };
+  if (replyTo) opts.replyTo = replyTo;
+  MailApp.sendEmail(opts);
+  return "gmail";
 }
 
 function json(status) {
@@ -155,7 +189,12 @@ function testSetup() {
   mainSheet(book);
   const pending = pendingSheet(book);
   console.log("3. Pending tab ready, rows: " + pending.getLastRow());
-  console.log("4. Emails left today: " + MailApp.getRemainingDailyQuota());
-  sendConfirmation(me, "test-only-this-link-will-not-work");
-  console.log("5. Sent a test confirmation email to " + me + ". All good: signups will work once deployed as a New version.");
+  const props = PropertiesService.getScriptProperties();
+  const usingBrevo = !!props.getProperty("BREVO_API_KEY");
+  console.log("4. Sending through: " + (usingBrevo ? "Brevo, from " + (props.getProperty("SENDER_EMAIL") || "no-reply@jergusino.com") : "this Gmail account (no BREVO_API_KEY saved)") +
+    " | replies go to: " + (props.getProperty("REPLY_TO") || "the sender"));
+  const link = ScriptApp.getService().getUrl() || "(not deployed yet)";
+  const how = sendMail(me, "Test: confirmation email setup", "This is a test from your signup script. Link base: " + link,
+    '<p style="font-family:Georgia,serif">This is a test from your signup script.</p>');
+  console.log("5. Sent a test email to " + me + " via " + how + ". If it says gmail but you expected Brevo, read the red error line above.");
 }
