@@ -21,7 +21,18 @@ unless you share it.
 
 Until `SHEET_URL` is set, the button shows "Signups open soon."
 
-## Use your own display font
+## Design
 
-The page uses Anton as a stand-in for Slithen. If Slithen's licence allows web use,
-add `slithen.woff2` to this folder and un-comment the `@font-face` block in `index.html`.
+Built on the Jergusino brand guide v5: Ink ground, Cream text, Yellow only on pointers
+(the script lead-in, the @, the button arrow). Loud headline bottom-left at F, one quiet
+group top-right.
+
+Fonts, in `assets/`:
+- `slithen.woff` and `borisna.woff`: the brand fonts, trimmed to Latin + Slovak characters.
+- The *you get the* script is Edwardian Script ITC turned into an SVG outline inside
+  `index.html`, so the font file itself is never published.
+- `favicon.svg`: the mark (S with the Yellow bar).
+
+Licences: Borisna is a demo font, free for private, non-profit use only. Before you sell
+anything through this list, buy the commercial licence from Koplexs Studio.
+Slithen shipped with web-font files; confirm your licence covers web use.
