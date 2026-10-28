@@ -11,7 +11,6 @@
  */
 const SHEET_ID = "16P0d7loImDomWPG9GpTgpHCfdGbLckaXOaiameCl6PE"; // "Newsletter signups"
 const SITE_URL = "https://jergusino.github.io/newsletter/";
-const APP_URL = "https://script.google.com/macros/s/AKfycbz-O7JY_BFxIDXNIZEsjbXh0wc538u7w3xP8A0nALSIvzYBQ-JvUoCJytGdAsFIqq0B/exec"; // this web app's /exec link
 const FROM_NAME = "Jergusino";
 const LINK_HOURS = 48;
 
@@ -100,7 +99,7 @@ function listHas(sheet, email) {
 }
 
 function sendConfirmation(email, token) {
-  const link = APP_URL + "?confirm=" + token;
+  const link = ScriptApp.getService().getUrl() + "?confirm=" + token; // this deployment's own /exec link
   const text =
     "Hi,\n\nSomeone (hopefully you) asked to get free design files from Jergusino at this address.\n\n" +
     "Confirm here: " + link + "\n\n" +
