@@ -187,14 +187,36 @@
     button.disabled = true;
     label.textContent = "Sending…";
     status.textContent = "";
+    const body = new URLSearchParams({ email: value, source: location.hostname || "local", consent: "Agreed to receive files and updates by email" });
+    const messages = {
+      pending: "Almost done. Check your inbox (and spam folder) and click the link to confirm your email.",
+      already: "This email is already on the list. You don’t need to do anything.",
+      invalid: "That doesn’t look like an email address. Try something like name@gmail.com.",
+    };
     try {
-      await fetch(SHEET_URL, {
-        method: "POST",
-        mode: "no-cors",
-        body: new URLSearchParams({ email: value, source: location.hostname || "local", consent: "Agreed to receive files and updates by email" }),
-      });
-      form.classList.add("done");
-      status.textContent = "Almost done. Check your inbox (and spam folder) and click the link to confirm your email.";
+      let result = "pending", res = null;
+      try {
+        res = await fetch(SHEET_URL, { method: "POST", body });
+      } catch (readError) {
+        // Some browsers block reading Google's reply; send it anyway and assume it went through.
+        await fetch(SHEET_URL, { method: "POST", mode: "no-cors", body });
+      }
+      if (res) {
+        try { result = (await res.json()).status; }
+        catch (badReply) { result = "broken"; }   // the script crashed or isn't deployed for "Anyone"
+      }
+      if (result === "broken") {
+        status.classList.add("error");
+        status.textContent = "Something went wrong on my side, sorry. Please try again later.";
+        return;
+      }
+      if (result === "invalid") {
+        status.classList.add("error");
+        status.textContent = messages.invalid;
+      } else {
+        form.classList.add("done");
+        status.textContent = messages[result] || messages.pending;
+      }
     } catch (err) {
       status.classList.add("error");
       status.textContent = "That didn’t go through. Check your internet connection and try again.";

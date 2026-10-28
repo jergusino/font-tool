@@ -24,13 +24,13 @@ function doPost(e) {
 
   // Don't send the same person more than one confirmation email every 10 minutes.
   const cache = CacheService.getScriptCache();
-  if (cache.get("sent:" + email)) return json("pending");
+  if (cache.get("sent:" + email)) return json("pending"); // email already sent in the last 10 minutes
 
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
     const book = SpreadsheetApp.openById(SHEET_ID);
-    if (listHas(mainSheet(book), email)) return json("ok"); // already confirmed; say nothing more
+    if (listHas(mainSheet(book), email)) return json("already"); // already confirmed: no new email
 
     const pending = pendingSheet(book);
     const token = Utilities.getUuid().replace(/-/g, "");
