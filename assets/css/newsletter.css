@@ -43,3 +43,17 @@ body.newsletter .prose { margin-top: calc(var(--F) * 2); }
 @media (max-width: 560px) {
   .signup button { flex: 1 1 100%; }
 }
+
+/* wide screens: the title on the left, the text and the form next to it on the right */
+@media (min-width: 1100px) {
+  .split {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    column-gap: calc(var(--F) * 5);
+    align-items: start;
+    padding: calc(var(--F) * 7) var(--F) 0;
+  }
+  .split .hero--project { padding-top: 0; --title-size: calc(var(--T) * 2.4); }
+  .split .hero--project .lockup { margin: 0; }
+  body.newsletter .split .prose { margin: 0; max-width: 40em; padding-top: calc(var(--F) * 1.5); }
+}
