@@ -76,10 +76,20 @@ function doGet(e) {
 
 // ---------- Helpers ----------
 
+// The confirmed list lives in the tab named "Subscribers" (found by name, so other
+// tabs, like a linked Google Form, can't get in the way). The first time, the
+// original "Untitled" tab is renamed to "Subscribers" so existing signups stay.
+const MAIN_TAB = "Subscribers";
+const MAIN_HEADER = ["Confirmed", "Email", "Source", "Consent", "Signed up"];
+
 function mainSheet(book) {
-  const s = book.getSheets()[0];
-  if (s.getLastRow() === 0) s.appendRow(["Confirmed", "Email", "Source", "Consent", "Signed up"]);
-  else if (s.getRange(1, 5).getValue() === "") s.getRange(1, 1, 1, 5).setValues([["Confirmed", "Email", "Source", "Consent", "Signed up"]]);
+  let s = book.getSheetByName(MAIN_TAB);
+  if (!s) {
+    s = book.getSheetByName("Untitled");
+    if (s) s.setName(MAIN_TAB);
+    else s = book.insertSheet(MAIN_TAB, 0);
+  }
+  if (s.getLastRow() === 0) s.appendRow(MAIN_HEADER);
   return s;
 }
 
