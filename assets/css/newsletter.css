@@ -30,10 +30,11 @@ body.newsletter .prose { margin-top: calc(var(--F) * 2); }
 .signup button:hover, .signup button:focus-visible { color: var(--yellow); border-color: var(--yellow); }
 .signup button[disabled] { cursor: progress; }
 
-.fine { margin-top: 0.9em; font-size: 1rem; max-width: 46ch; }
+/* small print at the bottom of the page: quiet grey, outside the brand palette on purpose */
+.foot .fine { margin-top: calc(var(--F) * 3); font-size: 0.875rem; line-height: 1.45; max-width: 60ch; padding: 0 var(--F); color: #8c897c; }
 .status { margin-top: 0.9em; min-height: 1.3em; }
 .status.error { color: var(--yellow); }
-.done .row, .done label, .done .fine { display: none; }
+.done .row, .done label { display: none; }
 .done .status { font-size: clamp(1.4rem, 2.4vw, 2.6rem); line-height: 1.15; max-width: 30ch; }
 
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
