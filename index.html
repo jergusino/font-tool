@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jergusino — free design files</title>
+<meta name="description" content="I make the files. You get them first, free. One email a week with free design resources from @jergusino.">
+<meta property="og:title" content="Jergusino — free design files">
+<meta property="og:description" content="I make the files. You get them first, free.">
+<meta name="theme-color" content="#FAF1D6">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Pinyon+Script&display=swap" rel="stylesheet">
+<style>
+  /* ---- Brand tokens (from the Jergusino design guide) ---- */
+  :root {
+    --cream: #FAF1D6;   /* main ground */
+    --ash: #8C897C;     /* frame */
+    --ink: #060909;     /* type */
+    --yellow: #FFC600;  /* the one highlight */
+    --display: "Slithen", "Anton", Impact, sans-serif;
+    --script: "Pinyon Script", cursive;
+    --body: "Fraunces", Georgia, serif;
+  }
+
+  /* Have the Slithen font file? Put slithen.woff2 next to this page and
+     un-comment this block. It will replace Anton automatically.
+  @font-face { font-family: "Slithen"; src: url("slithen.woff2") format("woff2"); font-display: swap; }
+  */
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--ash);
+    color: var(--ink);
+    font-family: var(--body);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Ash frame around a cream card, like the business card */
+  .card {
+    min-height: 100svh;
+    padding: clamp(6px, 1.3vw, 16px);
+    display: flex;
+  }
+  .field {
+    flex: 1;
+    background: var(--cream);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: clamp(18px, 3vw, 40px) clamp(18px, 3vw, 44px) 0;
+  }
+  .script {
+    font-family: var(--script);
+    font-size: clamp(40px, 6.5vw, 96px);
+    line-height: 1;
+    margin: 0;
+    font-weight: 400;
+  }
+  .handle {
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1.5px solid var(--ink);
+    padding-bottom: 1px;
+  }
+  .handle:hover { border-bottom-color: var(--yellow); }
+
+  /* The wordmark: full bleed, letters spread edge to edge */
+  .wordmark {
+    margin: auto 0 0;
+    padding: 0 clamp(10px, 1.6vw, 22px);
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--display);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(64px, 19.5vw, 340px);
+    line-height: .8;
+    letter-spacing: 0;
+    user-select: none;
+  }
+  .wordmark span { display: block; }
+
+  /* The yellow bar is the signup */
+  .bar {
+    background: var(--yellow);
+    padding: clamp(22px, 3vw, 40px) clamp(18px, 3vw, 44px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    gap: clamp(20px, 4vw, 64px);
+    align-items: end;
+  }
+  .tagline {
+    font-family: var(--display);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: clamp(30px, 3.6vw, 56px);
+    line-height: .95;
+    margin: 0;
+    max-width: 14ch;
+  }
+  .lede {
+    margin: 12px 0 0;
+    font-size: 17px;
+    line-height: 1.5;
+    max-width: 36ch;
+  }
+
+  form { display: flex; flex-direction: column; gap: 10px; }
+  label { font-size: 15px; font-weight: 600; }
+  .row { display: flex; gap: 0; }
+  input[type="email"] {
+    flex: 1;
+    min-width: 0;
+    font: inherit;
+    font-size: 18px;
+    color: var(--ink);
+    background: var(--cream);
+    border: 2px solid var(--ink);
+    border-right: 0;
+    padding: 0 16px;
+    height: 58px;
+    border-radius: 0;
+  }
+  input[type="email"]::placeholder { color: #5b594f; }
+  button {
+    font-family: var(--display);
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 22px;
+    letter-spacing: .01em;
+    color: var(--cream);
+    background: var(--ink);
+    border: 2px solid var(--ink);
+    height: 58px;
+    padding: 0 22px;
+    cursor: pointer;
+    border-radius: 0;
+    white-space: nowrap;
+  }
+  button:hover { background: #22262a; }
+  button[disabled] { opacity: .7; cursor: progress; }
+  input:focus-visible, button:focus-visible, .handle:focus-visible {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+  }
+  .fine { font-size: 13.5px; line-height: 1.45; margin: 2px 0 0; }
+  .status { font-size: 16px; font-weight: 600; min-height: 1.4em; margin: 0; }
+  .done .row, .done label, .done .fine { display: none; }
+
+  /* Hidden honeypot against bots */
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+  @media (max-width: 760px) {
+    .bar { grid-template-columns: 1fr; align-items: start; }
+    .tagline { max-width: none; }
+    .row { flex-direction: column; gap: 8px; }
+    input[type="email"] { flex: none; width: 100%; border-right: 2px solid var(--ink); }
+    button { width: 100%; }
+  }
+
+  /* One entrance: the yellow bar rises in once */
+  @media (prefers-reduced-motion: no-preference) {
+    .bar { animation: rise .7s cubic-bezier(.2,.8,.2,1) .15s both; }
+    @keyframes rise { from { transform: translateY(100%); } to { transform: none; } }
+  }
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="field">
+    <div class="top">
+      <p class="script" aria-hidden="true">i am</p>
+      <a class="handle" href="https://instagram.com/jergusino">@jergusino</a>
+    </div>
+
+    <h1 class="wordmark" aria-label="Jergusino">
+      <span aria-hidden="true">J</span><span aria-hidden="true">E</span><span aria-hidden="true">R</span><span aria-hidden="true">G</span><span aria-hidden="true">U</span><span aria-hidden="true">S</span><span aria-hidden="true">I</span><span aria-hidden="true">N</span><span aria-hidden="true">O</span>
+    </h1>
+
+    <section class="bar" aria-labelledby="tagline">
+      <div>
+        <h2 class="tagline" id="tagline">I make the files. You get them first, free.</h2>
+        <p class="lede">One short email a week with design resources I made: templates, textures, presets.</p>
+      </div>
+
+      <form id="signup" method="post" novalidate>
+        <label for="email">Your email</label>
+        <div class="row">
+          <input id="email" name="email_address" type="email" autocomplete="email" placeholder="you@example.com" required>
+          <button type="submit">Send me the files</button>
+        </div>
+        <div class="hp" aria-hidden="true"><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
+        <p class="fine">I only use your email to send you my files and updates. Want out? Reply "unsubscribe" to any email and I'll remove you.</p>
+        <p class="status" id="status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </div>
+</main>
+
+<script>
+  // ---- The only line you need to change ----
+  // Paste your Google Apps Script web app URL here (see README.md).
+  // It looks like  https://script.google.com/macros/s/AKfy.../exec
+  const SHEET_URL = "";
+
+  // Size the wordmark so its letters always fill the width exactly, whatever font loads.
+  const mark = document.querySelector(".wordmark");
+  function fitWordmark() {
+    mark.style.fontSize = "100px";
+    const letters = [...mark.children].reduce((w, s) => w + s.getBoundingClientRect().width, 0);
+    const cs = getComputedStyle(mark);
+    const room = mark.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight);
+    mark.style.fontSize = Math.floor(Math.min(100 * room / letters * 0.94, innerHeight * 0.5)) + "px";
+  }
+  fitWordmark();
+  document.fonts && document.fonts.ready.then(fitWordmark);
+  addEventListener("resize", fitWordmark);
+
+  const form = document.getElementById("signup");
+  const email = document.getElementById("email");
+  const status = document.getElementById("status");
+  const button = form.querySelector("button");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (form.website.value) return; // bot
+    const value = email.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      status.textContent = "Enter an email like name@example.com.";
+      email.focus();
+      return;
+    }
+    if (!SHEET_URL) {
+      status.textContent = "Signups open soon. Check back in a day or two.";
+      return;
+    }
+    button.disabled = true;
+    button.textContent = "Sending…";
+    status.textContent = "";
+    try {
+      // Google Apps Script doesn't send CORS headers, so the reply can't be read;
+      // a network failure still throws and lands in catch.
+      await fetch(SHEET_URL, {
+        method: "POST",
+        mode: "no-cors",
+        body: new URLSearchParams({
+          email: value,
+          source: location.hostname || "local",
+          consent: "Agreed to receive files and updates by email",
+        }),
+      });
+      form.classList.add("done");
+      status.textContent = "You're in. Your first email is on its way soon.";
+    } catch (err) {
+      status.textContent = "That didn't go through. Check your connection and try again.";
+    } finally {
+      button.disabled = false;
+      button.textContent = "Send me the files";
+    }
+  });
+</script>
+</body>
+</html>
