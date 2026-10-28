@@ -30,8 +30,9 @@ body.newsletter .prose { margin-top: calc(var(--F) * 2); }
 .signup button:hover, .signup button:focus-visible { color: var(--yellow); border-color: var(--yellow); }
 .signup button[disabled] { cursor: progress; }
 
-/* small print at the bottom of the page: quiet grey, outside the brand palette on purpose */
-.foot .fine { margin-top: calc(var(--F) * 3); font-size: 0.875rem; line-height: 1.45; max-width: 60ch; padding: 0 var(--F); color: #8c897c; }
+/* small print: quiet grey (outside the brand palette on purpose), at the bottom of the page just above the footer line */
+.fine { margin: calc(var(--F) * 8) var(--F) 0; font-size: 0.875rem; line-height: 1.45; max-width: 60ch; color: #8c897c; }
+.fine + .foot { margin-top: calc(var(--F) * 2); }
 .status { margin-top: 0.9em; min-height: 1.3em; }
 .status.error { color: var(--yellow); }
 .done .row, .done label { display: none; }
