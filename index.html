@@ -1,169 +1,77 @@
 <!doctype html>
-<html lang="en">
+<html lang="sk">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Free design files from Jergusino</title>
-<meta name="description" content="Templates, textures and presets I make, sent to your inbox for free. One email a week.">
-<meta property="og:title" content="Free design files from Jergusino">
-<meta property="og:description" content="Templates, textures and presets I make, sent to your inbox for free.">
-<meta name="theme-color" content="#060909">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
-<link rel="preload" href="assets/slithen.woff" as="font" type="font/woff" crossorigin>
-<link rel="preload" href="assets/borisna.woff" as="font" type="font/woff" crossorigin>
-<style>
-  @font-face { font-family: "Slithen"; src: url("assets/slithen.woff") format("woff"); font-display: swap; }
-  @font-face { font-family: "Borisna"; src: url("assets/borisna.woff") format("woff"); font-display: swap; }
-
-  :root {
-    --ink: #060909;
-    --cream: #FAF1D6;
-    --yellow: #FFC600;
-    --F: max(16px, calc(100vw / 70));
-    --side: max(20px, calc(4 * 100vw / 70));     /* 4F: margin for text layouts */
-  }
-
-  * { box-sizing: border-box; }
-  html { background: var(--ink); }
-  body {
-    margin: 0;
-    background: var(--ink);
-    color: var(--cream);
-    font-family: "Borisna", Georgia, serif;
-    font-size: clamp(18px, 1.1vw + 12px, 21px);
-    line-height: 1.45;
-    -webkit-font-smoothing: antialiased;
-  }
-  ::selection { background: var(--cream); color: var(--ink); }
-  a { color: var(--yellow); }
-  a:hover, a:focus-visible { color: var(--cream); }
-
-  .page {
-    min-height: 100svh;
-    display: flex;
-    flex-direction: column;
-    padding: var(--F) var(--side);
-  }
-  header, footer { font-size: 16px; }
-  .at { color: var(--yellow); }
-
-  main {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    padding: 48px 0;
-  }
-  .column { width: 100%; max-width: 34em; }
-
-  h1 {
-    margin: 0 0 .35em;
-    font-family: "Slithen", Impact, sans-serif;
-    font-weight: 400;
-    text-transform: uppercase;
-    letter-spacing: 0;
-    line-height: .9;
-    font-size: clamp(56px, 9vw, 112px);
-  }
-  .script { display: block; color: var(--yellow); line-height: 0; margin-bottom: calc(1.4 * var(--F) - .03em); }
-  .script svg { display: block; height: .389em; width: auto; overflow: visible; margin-left: -.005em; }
-
-  .intro { margin: 0 0 1.2em; max-width: 30em; }
-
-  ul.perks { list-style: none; margin: 0 0 2em; padding: 0; }
-  ul.perks li { display: flex; gap: .7em; align-items: baseline; margin: .35em 0; }
-  ul.perks svg { flex: none; width: .9em; height: .7em; transform: translateY(.05em); }
-
-  form { margin: 0; }
-  label { display: block; margin-bottom: .4em; }
-  .row { display: flex; gap: 12px; flex-wrap: wrap; }
-  input[type="email"] {
-    flex: 1 1 16em;
-    min-width: 0;
-    height: 56px;
-    font: inherit;
-    color: var(--cream);
-    caret-color: var(--cream);
-    background: var(--ink);
-    border: 2px solid var(--cream);
-    border-radius: 0;
-    padding: 0 16px;
-    outline: none;
-  }
-  input[type="email"]:focus-visible { border-color: var(--yellow); }
-  input:-webkit-autofill { -webkit-text-fill-color: var(--cream); -webkit-box-shadow: 0 0 0 100px var(--ink) inset; }
-
-  button {
-    height: 56px;
-    font: inherit;
-    color: var(--cream);
-    background: var(--ink);
-    border: 2px solid var(--cream);
-    border-radius: 0;
-    padding: 0 22px;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: .6em;
-    white-space: nowrap;
-  }
-  button svg { width: 1.1em; height: .8em; flex: none; }
-  button:hover, button:focus-visible { color: var(--yellow); border-color: var(--yellow); outline: none; }
-  button[disabled] { cursor: progress; }
-
-  .fine { margin: .9em 0 0; font-size: 16px; }
-  .status { margin: .9em 0 0; min-height: 1.45em; font-size: 1.05em; }
-  .error { color: var(--yellow); }
-  .done .row, .done label, .done .fine { display: none; }
-
-  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
-  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-
-  @media (max-width: 560px) {
-    button { flex: 1 1 100%; }
-  }
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Newsletter · Jergušino</title>
+  <meta name="description" content="Šablóny, textúry a presety od Jergušina zadarmo do tvojej schránky. Jeden krátky e-mail týždenne.">
+  <meta name="theme-color" content="#060909">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:site_name" content="Jergušino">
+  <meta property="og:title" content="Newsletter · Jergušino">
+  <meta property="og:description" content="Šablóny, textúry a presety zadarmo do tvojej schránky.">
+  <meta property="og:image" content="assets/img/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+  <link rel="preload" href="assets/fonts/Slithen.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="assets/fonts/Borisna.woff" as="font" type="font/woff" crossorigin>
+  <!-- main.css is a copy of the main site's stylesheet (jergusino.github.io/assets/css/main.css); newsletter.css adds the form -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/newsletter.css">
 </head>
-<body>
-<div class="page">
-  <header><span class="at">@</span>jergusino</header>
+<body class="project newsletter">
+  <a class="skip" href="#top">preskočiť na obsah</a>
 
-  <main>
-    <div class="column">
-      <h1>
-        <span class="script" aria-hidden="true"><svg role="presentation" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="-305 -757 4144 1449" data-above="757" data-below="692"><path fill="currentColor" d="M870 -313Q870 -297 762 -176Q641 -42 449 63L399 154Q263 405 94 541Q-68 672 -186 672Q-229 672 -257.0 646.0Q-285 620 -285 582Q-285 377 178 166Q278 120 307 104L477 -209Q366 -62 320.5 -19.5Q275 23 227 23Q175 23 138.5 -23.0Q102 -69 102 -135Q102 -308 328 -449Q479 -543 565 -543Q625 -543 625 -477Q625 -459 616 -434L672 -535Q699 -528 719 -528Q745 -528 795 -535Q788 -526 707 -385L459 43Q590 -31 668.5 -100.0Q747 -169 846 -299Q861 -319 866 -319Q870 -318 870 -313ZM614 -477Q614 -528 565 -528Q475 -528 326.5 -348.5Q178 -169 178 -59Q178 8 236 8Q295 8 436 -170Q614 -395 614 -477ZM297 121Q278 132 184 178Q-272 404 -272 584Q-272 615 -249.0 636.0Q-226 657 -190 657Q-80 657 24.0 544.5Q128 432 285 141Q285 141 297 121ZM1376 -313Q1376 -310 1358 -287L1315 -233Q1108 23 960 23Q890 23 842.5 -27.5Q795 -78 795 -154Q795 -334 1046 -471Q1178 -543 1261 -543Q1297 -543 1322.5 -521.5Q1348 -500 1348 -469Q1348 -397 1254.0 -346.5Q1160 -296 940 -252Q872 -149 872 -80Q872 6 965 6Q1123 6 1352 -303Q1364 -319 1372 -319Q1376 -318 1376 -313ZM1292 -498Q1292 -530 1257 -530Q1204 -530 1117.5 -456.5Q1031 -383 948 -266Q1092 -303 1192.0 -370.5Q1292 -438 1292 -498ZM1745 -543 1737 -528H1606L1383 -147Q1342 -78 1342 -37Q1342 8 1389 8Q1480 8 1696 -309Q1703 -319 1708 -319Q1714 -319 1714 -313Q1713 -310 1704 -297L1661 -238Q1473 23 1378 23Q1331 23 1299.5 -11.0Q1268 -45 1268 -96Q1268 -156 1321 -246L1489 -528H1387L1397 -543H1497L1614 -737Q1644 -729 1671 -729Q1699 -729 1729 -737L1614 -543ZM3188 -313Q3187 -310 3178 -297L3135 -238Q2947 23 2857 23Q2810 23 2780.0 -12.0Q2750 -47 2750 -102Q2750 -158 2788 -223Q2795 -235 2861 -330Q2945 -450 2945 -487Q2945 -528 2904 -528Q2772 -528 2451 14Q2431 10 2396 10Q2355 10 2326 14L2468 -211Q2607 -433 2607 -483Q2607 -528 2570 -528Q2515 -528 2390.0 -370.0Q2265 -212 2142 14Q2119 10 2083 10Q2044 10 2015 14L2158 -211Q2306 -443 2306 -498Q2306 -528 2283 -528Q2234 -528 2080 -313Q2070 -299 2064 -299Q2060 -300 2060 -305Q2060 -314 2152 -430Q2242 -543 2291 -543Q2323 -543 2346.0 -512.5Q2369 -482 2369 -440Q2369 -382 2310 -279Q2490 -543 2578 -543Q2620 -543 2647.0 -509.0Q2674 -475 2674 -424Q2674 -367 2621 -279Q2811 -543 2906 -543Q2949 -543 2978.5 -506.0Q3008 -469 3008 -416Q3008 -354 2959 -271Q2958 -270 2873 -143Q2824 -71 2824 -33Q2824 8 2865 8Q2943 8 3123 -244L3154 -287L3172 -309Q3177 -319 3182 -319Q3188 -319 3188 -313ZM3819 -313Q3819 -298 3709 -176Q3587 -42 3391 66L3342 154Q3197 414 3039 541Q2876 672 2756 672Q2715 672 2687.5 646.0Q2660 620 2660 582Q2660 381 3123 166Q3161 147 3237 113L3252 104L3428 -209Q3324 -66 3277.0 -21.5Q3230 23 3182 23Q3141 23 3110.5 -12.0Q3080 -47 3080 -94Q3080 -151 3151 -272L3305 -532Q3328 -528 3358 -528Q3384 -528 3430 -535L3233 -215Q3149 -79 3149 -37Q3149 8 3190 8Q3298 8 3522 -375L3614 -532Q3637 -528 3670 -528Q3697 -528 3737 -535Q3613 -338 3401 43Q3523 -20 3607.0 -93.5Q3691 -167 3795 -301Q3809 -319 3813 -319Q3819 -319 3819 -313ZM3242 121Q3226 130 3129 178Q2674 404 2674 584Q2674 659 2758 659Q2864 659 2969.0 544.0Q3074 429 3229 141Q3229 141 3242 121Z"/></svg></span>
-        <span class="sr">Get my </span>Free design files
-      </h1>
+  <header class="top">
+    <a class="top-mark" href="/" aria-label="Jergušino, domov">
+      <img src="assets/img/wordmark.svg" alt="" width="1020" height="262">
+    </a>
+    <nav class="top-nav" aria-label="Hlavná navigácia">
+      <a href="/projects/">projekty <svg class="arr" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg></a>
+      <a href="#kontakt">kontakt</a>
+    </nav>
+  </header>
 
-      <p class="intro">I’m a designer. I make templates, textures and presets, and I give some of them away. Leave your email and I’ll send them to you.</p>
+  <main id="top" tabindex="-1">
+    <section class="hero hero--page hero--project">
+      <div class="lockup">
+        <p class="lead desc">môj</p>
+        <h1 class="title">Newsletter</h1>
+      </div>
+    </section>
+
+    <article class="prose">
+      <p class="big">Robím šablóny, textúry a presety a niektoré z nich rozdávam zadarmo. Nechaj mi e-mail a pošlem ti ich.</p>
 
       <ul class="perks">
-        <li><svg viewBox="0 0 23 16" aria-hidden="true"><path fill="#FFC600" d="M15 0l8 8-8 8-1.6-1.6L18.7 9H0V7h18.7L13.4 1.6z"/></svg><span>Free files you can use right away</span></li>
-        <li><svg viewBox="0 0 23 16" aria-hidden="true"><path fill="#FFC600" d="M15 0l8 8-8 8-1.6-1.6L18.7 9H0V7h18.7L13.4 1.6z"/></svg><span>One short email a week, never more</span></li>
-        <li><svg viewBox="0 0 23 16" aria-hidden="true"><path fill="#FFC600" d="M15 0l8 8-8 8-1.6-1.6L18.7 9H0V7h18.7L13.4 1.6z"/></svg><span>Leave anytime: just reply “unsubscribe”</span></li>
+        <li><svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg><span>súbory zadarmo, hneď na použitie</span></li>
+        <li><svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg><span>jeden krátky e-mail týždenne, nikdy viac</span></li>
+        <li><svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg><span>odhlásiš sa kedykoľvek, stačí odpísať „odhlásiť“</span></li>
       </ul>
 
-      <form id="signup" method="post" novalidate>
-        <label for="email">Your email address</label>
+      <form id="signup" class="signup" method="post" novalidate>
+        <label for="email">Tvoj e-mail</label>
         <div class="row">
-          <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="" required aria-describedby="fine status">
+          <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="fine status">
           <button type="submit">
-            <span class="btn-text">Send me the files</span>
-            <svg viewBox="0 0 23 16" aria-hidden="true"><path fill="#FFC600" d="M15 0l8 8-8 8-1.6-1.6L18.7 9H0V7h18.7L13.4 1.6z"/></svg>
+            <span class="btn-text">pošli mi súbory</span>
+            <svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg>
           </button>
         </div>
         <div class="hp" aria-hidden="true"><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
-        <p class="fine" id="fine">You’ll get a short email to confirm it’s you. I only use your email to send you these files and never share it.</p>
+        <p class="fine" id="fine">Najprv ti príde krátky e-mail, v ktorom potvrdíš, že si to ty. Tvoj e-mail použijem len na posielanie týchto súborov a s nikým ho nezdieľam.</p>
         <p class="status" id="status" role="status" aria-live="polite"></p>
       </form>
-    </div>
+    </article>
   </main>
 
-  <footer>Made by Jergusino · <a href="https://instagram.com/jergusino">Instagram</a></footer>
-</div>
+  <footer class="foot" id="kontakt">
+    <p class="handle"><a href="mailto:jergusino@proton.me">jergusino<span class="at">@</span>proton.me</a></p>
+  </footer>
 
 <script>
-  // Your Google Apps Script web app URL (see README.md)
+  // Google Apps Script web app (see README.md). It saves the email as pending and sends the confirmation email.
   const SHEET_URL = "https://script.google.com/macros/s/AKfycbwzb0EDm8Rme1YKbwV1A5090Xy8KaP20UOvHCXbhvao1tViq3Yg2vBaLdlMIsiN-4s/exec";
 
   const form = document.getElementById("signup");
@@ -172,27 +80,30 @@
   const button = form.querySelector("button");
   const label = button.querySelector(".btn-text");
 
+  const messages = {
+    invalid: "Toto nevyzerá ako e-mailová adresa. Skús niečo ako meno@gmail.com.",
+    pending: "Skoro hotovo. Pozri si schránku (aj spam) a e-mail potvrď kliknutím na odkaz.",
+    already: "Tento e-mail už je v zozname. Nemusíš robiť nič.",
+    broken: "Niečo sa pokazilo na mojej strane. Skús to prosím neskôr.",
+    offline: "Nepodarilo sa to odoslať. Skontroluj pripojenie na internet a skús to znova.",
+    soon: "Prihlasovanie čoskoro spustím. Skús to o pár dní.",
+  };
+  const show = (key, isError) => {
+    status.classList.toggle("error", !!isError);
+    status.textContent = messages[key];
+  };
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     if (form.website.value) return;
     const value = email.value.trim();
-    status.classList.remove("error");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      status.classList.add("error");
-      status.textContent = "That doesn’t look like an email address. Try something like name@gmail.com.";
-      email.focus();
-      return;
-    }
-    if (!SHEET_URL) { status.textContent = "Signups open soon. Check back in a day or two."; return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) { show("invalid", true); email.focus(); return; }
+    if (!SHEET_URL) { show("soon"); return; }
+
     button.disabled = true;
-    label.textContent = "Sending…";
+    label.textContent = "odosielam…";
     status.textContent = "";
-    const body = new URLSearchParams({ email: value, source: location.hostname || "local", consent: "Agreed to receive files and updates by email" });
-    const messages = {
-      pending: "Almost done. Check your inbox (and spam folder) and click the link to confirm your email.",
-      already: "This email is already on the list. You don’t need to do anything.",
-      invalid: "That doesn’t look like an email address. Try something like name@gmail.com.",
-    };
+    const body = new URLSearchParams({ email: value, source: location.hostname || "local", consent: "Súhlasil s posielaním súborov a noviniek e-mailom" });
     try {
       let result = "pending", res = null;
       try {
@@ -202,27 +113,16 @@
         await fetch(SHEET_URL, { method: "POST", mode: "no-cors", body });
       }
       if (res) {
-        try { result = (await res.json()).status; }
-        catch (badReply) { result = "broken"; }   // the script crashed or isn't deployed for "Anyone"
+        try { result = (await res.json()).status; } catch (badReply) { result = "broken"; }
       }
-      if (result === "broken") {
-        status.classList.add("error");
-        status.textContent = "Something went wrong on my side, sorry. Please try again later.";
-        return;
-      }
-      if (result === "invalid") {
-        status.classList.add("error");
-        status.textContent = messages.invalid;
-      } else {
-        form.classList.add("done");
-        status.textContent = messages[result] || messages.pending;
-      }
+      if (result === "invalid" || result === "broken") { show(result, true); return; }
+      form.classList.add("done");
+      show(result === "already" ? "already" : "pending");
     } catch (err) {
-      status.classList.add("error");
-      status.textContent = "That didn’t go through. Check your internet connection and try again.";
+      show("offline", true);
     } finally {
       button.disabled = false;
-      label.textContent = "Send me the files";
+      label.textContent = "pošli mi súbory";
     }
   });
 </script>

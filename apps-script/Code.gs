@@ -11,7 +11,8 @@
  */
 const SHEET_ID = "16P0d7loImDomWPG9GpTgpHCfdGbLckaXOaiameCl6PE"; // "Newsletter signups"
 const SITE_URL = "https://jergusino.github.io/newsletter/";
-const FROM_NAME = "Jergusino";
+const SITE_ROOT = "https://jergusino.github.io/"; // the main site
+const FROM_NAME = "Jergušino";
 const LINK_HOURS = 48;
 
 // ---------- Web endpoints ----------
@@ -56,19 +57,19 @@ function doGet(e) {
     const pending = pendingSheet(book);
     const rows = pending.getLastRow() > 1 ? pending.getRange(2, 1, pending.getLastRow() - 1, 5).getValues() : [];
     const i = rows.findIndex(r => r[2] === token);
-    if (i === -1) return page("This link has already been used or doesn’t work.", "If you already confirmed, you’re on the list. If not, sign up again on the page.");
+    if (i === -1) return page("ups", "Neplatný odkaz", "Tento odkaz už bol použitý alebo nefunguje. Ak je tvoj e-mail už potvrdený, si v zozname. Ak nie, prihlás sa znova na stránke.");
 
     const [created, email, , source, consent] = rows[i];
     if (Date.now() - new Date(created).getTime() > LINK_HOURS * 3600 * 1000) {
       pending.deleteRow(i + 2);
-      return page("This link has expired.", "Links work for " + LINK_HOURS + " hours. Sign up again on the page and you’ll get a new one.");
+      return page("ups", "Odkaz vypršal", "Odkazy platia " + LINK_HOURS + " hodín. Prihlás sa znova na stránke a príde ti nový.");
     }
 
     const main = mainSheet(book);
     if (!listHas(main, email)) main.appendRow([new Date(), email, source, consent, created]);
     // Remove every pending row for this email (they may have signed up twice).
     for (let r = rows.length - 1; r >= 0; r--) if (rows[r][1] === email) pending.deleteRow(r + 2);
-    return page("You’re on the list.", "Thanks for confirming. The first files are on their way to " + email + ".");
+    return page("hotovo", "Si v zozname", "Ďakujem za potvrdenie. Prvé súbory ti pošlem na " + email + ".");
   } finally {
     lock.releaseLock();
   }
@@ -111,18 +112,18 @@ function listHas(sheet, email) {
 function sendConfirmation(email, token) {
   const link = ScriptApp.getService().getUrl() + "?confirm=" + token; // this deployment's own /exec link
   const text =
-    "Hi,\n\nSomeone (hopefully you) asked to get free design files from Jergusino at this address.\n\n" +
-    "Confirm here: " + link + "\n\n" +
-    "The link works for " + LINK_HOURS + " hours. If this wasn’t you, ignore this email and nothing happens.\n\n— Jergusino";
+    "Ahoj,\n\nniekto (dúfam, že ty) chce na túto adresu dostávať súbory zadarmo od Jergušina.\n\n" +
+    "Potvrď to tu: " + link + "\n\n" +
+    "Odkaz platí " + LINK_HOURS + " hodín. Ak to nie si ty, tento e-mail ignoruj a nič sa nestane.\n\nJergušino";
   const html =
     '<div style="background:#060909;padding:32px 24px;font-family:Georgia,serif;color:#FAF1D6">' +
-    '<p style="margin:0 0 8px;font-size:15px">@jergusino</p>' +
-    '<h1 style="margin:24px 0 12px;font-size:28px;line-height:1.1;text-transform:uppercase;font-family:Impact,\'Arial Narrow\',sans-serif;font-weight:400;color:#FAF1D6">Confirm your email</h1>' +
-    '<p style="margin:0 0 24px;font-size:17px;line-height:1.5;color:#FAF1D6">Someone (hopefully you) asked to get free design files from me at this address. Click below to confirm.</p>' +
-    '<p style="margin:0 0 24px"><a href="' + link + '" style="display:inline-block;border:2px solid #FAF1D6;padding:14px 22px;color:#FAF1D6;text-decoration:none;font-size:17px">Yes, send me the files <span style="color:#FFC600">&rarr;</span></a></p>' +
-    '<p style="margin:0;font-size:14px;line-height:1.5;color:#FAF1D6">The link works for ' + LINK_HOURS + ' hours. If this wasn’t you, ignore this email and nothing happens.</p>' +
+    '<img src="' + SITE_URL + 'assets/img/wordmark.svg" alt="Jergušino" width="150" style="display:block;width:150px;height:auto;border:0">' +
+    '<h1 style="margin:32px 0 12px;font-size:30px;line-height:1;text-transform:uppercase;font-family:Impact,\'Arial Narrow\',sans-serif;font-weight:400;color:#FAF1D6">Potvrď svoj e-mail</h1>' +
+    '<p style="margin:0 0 24px;font-size:17px;line-height:1.5;color:#FAF1D6">Niekto (dúfam, že ty) chce na túto adresu dostávať súbory zadarmo odo mňa. Potvrď to kliknutím nižšie.</p>' +
+    '<p style="margin:0 0 24px"><a href="' + link + '" style="display:inline-block;border:2px solid #FAF1D6;padding:14px 22px;color:#FAF1D6;text-decoration:none;font-size:17px">áno, pošli mi súbory <span style="color:#FFC600">&rarr;</span></a></p>' +
+    '<p style="margin:0;font-size:14px;line-height:1.5;color:#FAF1D6">Odkaz platí ' + LINK_HOURS + ' hodín. Ak to nie si ty, tento e-mail ignoruj a nič sa nestane.</p>' +
     '</div>';
-  sendMail(email, "Confirm your email to get the free files", text, html);
+  sendMail(email, "Potvrď e-mail a získaj súbory zadarmo", text, html);
 }
 
 /**
@@ -163,19 +164,28 @@ function json(status) {
   return ContentService.createTextOutput(JSON.stringify({ status: status })).setMimeType(ContentService.MimeType.JSON);
 }
 
-function page(title, message) {
-  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+// The confirmation pages look like the newsletter page: the site's own stylesheet,
+// logo in the header, the same footer.
+function page(lead, title, message) {
+  const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const desc = /[gjpqyf]/.test(lead) ? " desc" : "";
+  const arrow = '<svg class="arr" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg>';
   const html =
-    '<!doctype html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><style>' +
-    '@font-face{font-family:Slithen;src:url(' + SITE_URL + 'assets/slithen.woff) format("woff")}' +
-    '@font-face{font-family:Borisna;src:url(' + SITE_URL + 'assets/borisna.woff) format("woff")}' +
-    'html,body{margin:0;background:#060909;color:#FAF1D6;font-family:Borisna,Georgia,serif;font-size:19px;line-height:1.45}' +
-    '.w{min-height:100vh;box-sizing:border-box;padding:40px max(20px,6vw);display:flex;flex-direction:column;justify-content:center;max-width:44em}' +
-    'h1{font-family:Slithen,Impact,sans-serif;font-weight:400;text-transform:uppercase;line-height:.9;font-size:clamp(44px,8vw,96px);margin:0 0 .3em}' +
-    'a{color:#FFC600}a:hover{color:#FAF1D6}' +
-    '</style></head><body><div class="w"><h1>' + esc(title) + '</h1><p>' + esc(message) + '</p>' +
-    '<p><a href="' + SITE_URL + '" target="_top">Back to the page</a></p></div></body></html>';
-  return HtmlService.createHtmlOutput(html).setTitle("Jergusino").addMetaTag("viewport", "width=device-width, initial-scale=1");
+    '<!doctype html><html lang="sk"><head><meta charset="utf-8">' +
+    '<link rel="stylesheet" href="' + SITE_URL + 'assets/css/main.css">' +
+    '<link rel="stylesheet" href="' + SITE_URL + 'assets/css/newsletter.css">' +
+    '</head><body class="project newsletter">' +
+    '<header class="top"><a class="top-mark" href="' + SITE_ROOT + '" target="_top" aria-label="Jergušino, domov">' +
+    '<img src="' + SITE_URL + 'assets/img/wordmark.svg" alt="" width="1020" height="262"></a>' +
+    '<nav class="top-nav" aria-label="Hlavná navigácia"><a href="' + SITE_ROOT + 'projects/" target="_top">projekty ' + arrow + '</a>' +
+    '<a href="' + SITE_URL + '#kontakt" target="_top">kontakt</a></nav></header>' +
+    '<main><section class="hero hero--page hero--project"><div class="lockup">' +
+    '<p class="lead' + desc + '">' + esc(lead) + '</p><h1 class="title">' + esc(title) + '</h1></div></section>' +
+    '<article class="prose"><p class="big">' + esc(message) + '</p>' +
+    '<ul class="links"><li><a href="' + SITE_URL + '" target="_top">späť na newsletter ' + arrow + '</a></li></ul></article></main>' +
+    '<footer class="foot"><p class="handle"><a href="mailto:jergusino@proton.me" target="_top">jergusino<span class="at">@</span>proton.me</a></p></footer>' +
+    '</body></html>';
+  return HtmlService.createHtmlOutput(html).setTitle(title + " · Jergušino").addMetaTag("viewport", "width=device-width, initial-scale=1");
 }
 
 // ---------- Setup check: select "testSetup" and click Run in the Apps Script editor ----------
