@@ -134,3 +134,19 @@ function page(title, message) {
     '<p><a href="' + SITE_URL + '" target="_top">Back to the page</a></p></div></body></html>';
   return HtmlService.createHtmlOutput(html).setTitle("Jergusino").addMetaTag("viewport", "width=device-width, initial-scale=1");
 }
+
+// ---------- Setup check: select "testSetup" and click Run in the Apps Script editor ----------
+// Runs every step a real signup uses and logs what happens (View → Logs / Execution log).
+// It also asks for any permission that's still missing. It sends one test email to you.
+function testSetup() {
+  const me = Session.getEffectiveUser().getEmail();
+  console.log("1. Running as: " + me);
+  const book = SpreadsheetApp.openById(SHEET_ID);
+  console.log("2. Opened sheet: " + book.getName());
+  mainSheet(book);
+  const pending = pendingSheet(book);
+  console.log("3. Pending tab ready, rows: " + pending.getLastRow());
+  console.log("4. Emails left today: " + MailApp.getRemainingDailyQuota());
+  sendConfirmation(me, "test-only-this-link-will-not-work");
+  console.log("5. Sent a test confirmation email to " + me + ". All good: signups will work once deployed as a New version.");
+}
