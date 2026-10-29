@@ -14,6 +14,7 @@ const SITE_URL = "https://jergusino.github.io/newsletter/";
 const SITE_ROOT = "https://jergusino.github.io/"; // the main site
 const FROM_NAME = "Jergušino";
 const LINK_HOURS = 48;
+const TOOL_URL = "https://jergusino.com/font-tool/tool/"; // the Font Tool, sent to everyone who signs up on jergusino.com/font-tool/
 
 // ---------- Web endpoints ----------
 
@@ -21,6 +22,9 @@ function doPost(e) {
   const p = (e && e.parameter) || {};
   const email = String(p.email || "").trim().toLowerCase();
   if (!/^[^\s@]{1,64}@[^\s@]{1,190}\.[^\s@]{2,24}$/.test(email)) return json("invalid");
+
+  // The Font Tool page: always email the link to the tool, whether or not the address is already in the sheet.
+  if (p.list === "font-tool") return sendTool(email, p);
 
   // Don't send the same person more than one confirmation email every 10 minutes.
   const cache = CacheService.getScriptCache();
@@ -73,6 +77,46 @@ function doGet(e) {
   } finally {
     lock.releaseLock();
   }
+}
+
+// ---------- Font Tool ----------
+
+// Sends the link to the Font Tool right away (no confirmation step) and writes the
+// signup into the "Font tool" tab. The same address gets at most one email per
+// 10 minutes, so nobody can flood someone else's inbox through the form.
+function sendTool(email, p) {
+  const cache = CacheService.getScriptCache();
+  if (cache.get("tool:" + email)) return json("sent");
+  const lock = LockService.getScriptLock();
+  lock.waitLock(10000);
+  try {
+    toolSheet(SpreadsheetApp.openById(SHEET_ID)).appendRow([new Date(), email, String(p.source || "").slice(0, 100), String(p.consent || "").slice(0, 200)]);
+  } finally {
+    lock.releaseLock();
+  }
+  const text =
+    "Ahoj,\n\ntu je tvoj Font Tool: " + TOOL_URL + "\n\n" +
+    "Nahraj doň font (.ttf alebo .otf) a tool doň dorobí chýbajúce slovenské písmená. Font sa spracuje priamo v tvojom prehliadači.\n\nJergušino";
+  const html =
+    '<div style="background:#060909;padding:32px 24px;font-family:Georgia,serif;color:#FAF1D6">' +
+    '<img src="' + SITE_URL + 'assets/img/wordmark.svg" alt="Jergušino" width="150" style="display:block;width:150px;height:auto;border:0">' +
+    '<h1 style="margin:32px 0 12px;font-size:30px;line-height:1;text-transform:uppercase;font-family:Impact,\'Arial Narrow\',sans-serif;font-weight:400;color:#FAF1D6">Tvoj Font Tool</h1>' +
+    '<p style="margin:0 0 24px;font-size:17px;line-height:1.5;color:#FAF1D6">Nahraj doň font (.ttf alebo .otf) a tool doň dorobí chýbajúce slovenské písmená z jeho vlastných častí. Font sa spracuje priamo v tvojom prehliadači.</p>' +
+    '<p style="margin:0 0 24px"><a href="' + TOOL_URL + '" style="display:inline-block;border:2px solid #FAF1D6;padding:14px 22px;color:#FAF1D6;text-decoration:none;font-size:17px">otvoriť Font Tool <span style="color:#FFC600">&rarr;</span></a></p>' +
+    '<p style="margin:0;font-size:14px;line-height:1.5;color:#FAF1D6">Odkaz si ulož, funguje stále.</p>' +
+    '</div>';
+  sendMail(email, "Tvoj Font Tool od Jergušina", text, html);
+  cache.put("tool:" + email, "1", 600);
+  return json("sent");
+}
+
+function toolSheet(book) {
+  let s = book.getSheetByName("Font tool");
+  if (!s) {
+    s = book.insertSheet("Font tool");
+    s.appendRow(["Sent", "Email", "Source", "Consent"]);
+  }
+  return s;
 }
 
 // ---------- Helpers ----------

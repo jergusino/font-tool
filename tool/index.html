@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="sk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Font Tool · Jergušino</title>
+  <meta name="description" content="Dorob do fontu chýbajúce slovenské písmená. Priamo v prehliadači.">
+  <meta name="robots" content="noindex">
+  <meta name="theme-color" content="#060909">
+  <meta name="color-scheme" content="dark">
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+  <link rel="preload" href="../assets/fonts/Slithen.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="../assets/fonts/Borisna.woff" as="font" type="font/woff" crossorigin>
+  <link rel="stylesheet" href="../assets/css/main.css">
+  <link rel="stylesheet" href="../assets/css/newsletter.css">
+  <link rel="stylesheet" href="../assets/css/tool.css">
+</head>
+<body class="project newsletter tool">
+  <a class="skip" href="#top">preskočiť na obsah</a>
+
+  <header class="top">
+    <a class="top-mark" href="/" aria-label="Jergušino, domov">
+      <img src="../assets/img/wordmark.svg" alt="" width="1020" height="262">
+    </a>
+    <nav class="top-nav" aria-label="Hlavná navigácia">
+      <a href="/projects/">projekty <svg class="arr" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg></a>
+      <a href="#kontakt">kontakt</a>
+    </nav>
+  </header>
+
+  <main id="top" tabindex="-1">
+    <div class="split">
+      <section class="hero hero--page hero--project">
+        <div class="lockup">
+          <p class="lead desc">tvoj</p>
+          <h1 class="title">Font Tool</h1>
+        </div>
+      </section>
+
+      <article class="prose">
+        <p class="big">Nahraj font a tool doň dorobí chýbajúce slovenské písmená z jeho vlastných častí.</p>
+        <p class="intro">Mäkčeň vezme zo Š, dĺžeň z É a ď, ľ, ť dostanú apostrof z písma. Font sa spracuje priamo v tvojom prehliadači a nikam sa neodosiela.</p>
+
+        <form id="tool" class="tool-form" novalidate>
+          <fieldset class="step">
+            <legend>1. Vyber font</legend>
+            <label class="drop" id="drop">
+              <input id="file" type="file" accept=".ttf,.otf,font/ttf,font/otf" multiple>
+              <span class="drop-text" id="drop-text">potiahni sem .ttf alebo .otf, alebo klikni a vyber</span>
+            </label>
+          </fieldset>
+
+          <fieldset class="step">
+            <legend>2. Ktoré písmená</legend>
+            <div class="choices">
+              <label><input type="radio" name="charset" value="slovak" checked> slovenčina</label>
+              <label><input type="radio" name="charset" value="czech"> čeština</label>
+              <label><input type="radio" name="charset" value="ce"> stredná Európa</label>
+            </div>
+            <label class="field">alebo len tieto písmená
+              <input id="chars" type="text" autocomplete="off" spellcheck="false" placeholder="napríklad ŕĺ">
+            </label>
+          </fieldset>
+
+          <details class="more-opts">
+            <summary>ďalšie nastavenia</summary>
+            <div class="choices">
+              <span>Veľké Ľ:</span>
+              <label><input type="radio" name="lcaron" value="apostrophe" checked> s apostrofom</label>
+              <label><input type="radio" name="lcaron" value="caron"> s háčikom</label>
+            </div>
+            <label class="field">Nový názov rodiny písma (aby si mohol mať nainštalované obe verzie)
+              <input id="rename" type="text" autocomplete="off" placeholder="napríklad Slithen SK">
+            </label>
+            <label class="field">Veľkosť apostrofu pri ď ľ ť: <output id="scale-out">0.9</output>
+              <input id="scale" type="range" min="0.6" max="1.2" step="0.05" value="0.9">
+            </label>
+            <label class="check"><input id="kerning" type="checkbox" checked> skopírovať kerning zo základných písmen</label>
+            <label class="check"><input id="winascent" type="checkbox"> zvýšiť winAscent (staré Windows aplikácie neorežú vysoké akcenty, zmení sa ale riadkovanie)</label>
+          </details>
+
+          <button type="submit" id="go">
+            <span class="btn-text">oprav font</span>
+            <svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg>
+          </button>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </form>
+      </article>
+    </div>
+
+    <section class="results" id="results" aria-live="polite"></section>
+  </main>
+
+  <p class="fine">Pred úpravou skontroluj licenciu fontu: niektoré licencie úpravy zakazujú. Nepodporované sú variabilné fonty a písmená so znamienkom pod písmenom (ą, ę, ł).</p>
+
+  <footer class="foot" id="kontakt">
+    <p class="handle"><a href="mailto:jergusino@proton.me">jergusino<span class="at">@</span>proton.me</a></p>
+  </footer>
+
+<script>
+  // Runs font_tool.py (the original Python script) in the browser with Pyodide.
+  const PYODIDE = "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/";
+  const $ = (id) => document.getElementById(id);
+  const status = $("status");
+  const say = (text, isError) => { status.textContent = text; status.classList.toggle("error", !!isError); };
+
+  let pyPromise = null;
+  function loadScript(src) {
+    return new Promise((ok, fail) => {
+      const s = document.createElement("script");
+      s.src = src; s.onload = ok; s.onerror = () => fail(new Error("load " + src));
+      document.head.appendChild(s);
+    });
+  }
+  function getPython() {
+    if (!pyPromise) {
+      pyPromise = (async () => {
+        if (!window.loadPyodide) await loadScript(PYODIDE + "pyodide.js");
+        const py = await loadPyodide({ indexURL: PYODIDE });
+        await py.loadPackage("fonttools");
+        const [tool, runner] = await Promise.all(["font_tool.py", "runner.py"].map((f) => fetch(f, { cache: "no-cache" }).then((r) => {
+          if (!r.ok) throw new Error(f + " " + r.status);
+          return r.text();
+        })));
+        py.FS.mkdirTree("/tool");
+        py.FS.mkdirTree("/work");
+        py.FS.writeFile("/tool/font_tool.py", tool);
+        py.FS.writeFile("/tool/runner.py", runner);
+        await py.runPythonAsync("import sys\nsys.path.insert(0, '/tool')\nimport runner");
+        return py;
+      })().catch((e) => { pyPromise = null; throw e; });
+    }
+    return pyPromise;
+  }
+  // start downloading the tool in the background right away
+  getPython().catch(() => {});
+
+  // ---- file choice / drag and drop
+  const fileInput = $("file"), drop = $("drop"), dropText = $("drop-text");
+  let files = [];
+  function setFiles(list) {
+    files = [...list].filter((f) => /\.(ttf|otf)$/i.test(f.name));
+    dropText.textContent = files.length ? files.map((f) => f.name).join(", ") : "potiahni sem .ttf alebo .otf, alebo klikni a vyber";
+    drop.classList.toggle("has-file", files.length > 0);
+    if (list.length && !files.length) say("Toto nie je .ttf ani .otf súbor.", true); else say("");
+  }
+  fileInput.addEventListener("change", () => setFiles(fileInput.files));
+  ["dragenter", "dragover"].forEach((t) => drop.addEventListener(t, (e) => { e.preventDefault(); drop.classList.add("over"); }));
+  ["dragleave", "drop"].forEach((t) => drop.addEventListener(t, () => drop.classList.remove("over")));
+  drop.addEventListener("drop", (e) => { e.preventDefault(); setFiles(e.dataTransfer.files); });
+  $("scale").addEventListener("input", (e) => ($("scale-out").textContent = e.target.value));
+
+  // ---- Slovak wording for the script's report
+  const STATUS = { built: "pridané", mapped: "priradené", skipped: "preskočené", note: "poznámka" };
+  function sk(how) {
+    return how
+      .replace(/^accent from spacing glyph (U\+[0-9A-F]+)$/, "akcent zo samostatného znaku $1")
+      .replace(/^accent from (.)$/, "akcent z písmena $1")
+      .replace(/^apostrophe-style caron from ’$/, "apostrof z ’")
+      .replace(/^no base letter '(.+)' in the font$/, "vo fonte chýba základné písmeno $1")
+      .replace(/^no letter or accent glyph to take the accent from$/, "vo fonte nie je písmeno ani znak, z ktorého by sa dal vziať akcent")
+      .replace(/^mark below or through the letter is not supported$/, "znamienko pod písmenom alebo cez písmeno nie je podporované")
+      .replace(/^no apostrophe glyph$/, "vo fonte chýba apostrof")
+      .replace(/^glyph '(.+)' was in the font but had no code point$/, "znak $1 vo fonte bol, len nebol priradený")
+      .replace(/^winAscent raised to (\d+)$/, "winAscent zvýšený na $1")
+      .replace(/^the tallest new letter reaches (\d+) units, above winAscent \((\d+)\)\..*$/s,
+        "Najvyššie nové písmeno siaha na $1 jednotiek, nad winAscent ($2). V starých Windows aplikáciách sa môže orezať akcent, prehliadače, Adobe a Remotion sú v poriadku. Ak to vadí, zapni v ďalších nastaveniach „zvýšiť winAscent“.");
+  }
+  function skError(msg) {
+    if (/variable fonts/.test(msg)) return "Variabilné fonty tool nepodporuje.";
+    if (/CFF2/.test(msg)) return "Fonty vo formáte CFF2 tool nepodporuje.";
+    if (/CID-keyed/.test(msg)) return "Fonty typu CID-keyed CFF tool nepodporuje.";
+    if (/TTLibError|Not a TrueType|not enough data|bad sfntVersion/i.test(msg)) return "Tento súbor sa nedá otvoriť ako font.";
+    return "Font sa nepodarilo spracovať: " + msg;
+  }
+  const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+
+  let fontCounter = 0;
+  async function preview(box, origBytes, newBytes, sample) {
+    const id = ++fontCounter;
+    const faces = [["pôvodný", "ftOrig" + id, origBytes], ["opravený", "ftNew" + id, newBytes]];
+    for (const [title, family, bytes] of faces) {
+      const face = new FontFace(family, bytes.slice(0));
+      try { await face.load(); document.fonts.add(face); } catch (e) { continue; }
+      const block = el("div", "pv");
+      block.append(el("p", "pv-l", title));
+      for (const line of sample) {
+        const p = el("p", "pv-t", line);
+        p.style.fontFamily = `"${family}", Georgia, serif`;
+        block.append(p);
+      }
+      box.append(block);
+    }
+  }
+
+  // ---- run
+  $("tool").addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (!files.length) { say("Najprv vyber font (.ttf alebo .otf).", true); fileInput.focus(); return; }
+    const go = $("go"), label = go.querySelector(".btn-text");
+    go.disabled = true;
+    label.textContent = "pracujem…";
+    say("Pripravujem tool. Prvýkrát to môže trvať asi 10 sekúnd.");
+    let py;
+    try {
+      py = await getPython();
+    } catch (err) {
+      say("Tool sa nepodarilo načítať. Skontroluj pripojenie na internet a skús to znova.", true);
+      go.disabled = false; label.textContent = "oprav font";
+      return;
+    }
+    const opts = JSON.stringify({
+      charset: document.querySelector("input[name=charset]:checked").value,
+      chars: $("chars").value,
+      lcaron: document.querySelector("input[name=lcaron]:checked").value,
+      apostrophe_scale: $("scale").value,
+      rename: $("rename").value,
+      kerning: $("kerning").checked,
+      raise_win_ascent: $("winascent").checked,
+    });
+    const results = $("results");
+    results.textContent = "";
+    let done = 0;
+    for (const file of files) {
+      say(`Opravujem ${file.name}…`);
+      await new Promise((r) => setTimeout(r, 30)); // let the message show
+      const card = el("div", "res");
+      card.append(el("h2", "res-h", file.name));
+      results.append(card);
+      if (file.size > 20 * 1024 * 1024) { card.append(el("p", "res-err", "Súbor je väčší ako 20 MB.")); continue; }
+      const bytes = new Uint8Array(await file.arrayBuffer());
+      const safe = file.name.replace(/[^\w.\- ]+/g, "_");
+      const src = "/work/" + safe;
+      let r;
+      try {
+        py.FS.writeFile(src, bytes);
+        r = JSON.parse(py.globals.get("runner").fix_font(src, opts));
+      } catch (err) {
+        r = { ok: false, error: String(err && err.message || err) };
+      }
+      if (!r.ok) { card.append(el("p", "res-err", skError(r.error))); try { py.FS.unlink(src); } catch (_) {} continue; }
+
+      const built = r.report.filter((x) => x.status === "built" || x.status === "mapped").map((x) => x.char).join(" ");
+      if (!r.changed) {
+        card.append(el("p", "res-sum", "Vo fonte už sú všetky písmená. Nie je čo pridávať."));
+      } else {
+        card.append(el("p", "res-sum", `Pridané písmená: ${built}`));
+        const out = py.FS.readFile(r.output);
+        const blob = new Blob([out], { type: /\.otf$/i.test(r.name) ? "font/otf" : "font/ttf" });
+        const a = el("a", "dl");
+        a.href = URL.createObjectURL(blob);
+        a.download = r.name;
+        a.append(document.createTextNode("stiahni " + r.name + " "));
+        a.insertAdjacentHTML("beforeend", '<svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg>');
+        card.append(a);
+        const pv = el("div", "pvs");
+        card.append(pv);
+        await preview(pv, bytes, out, r.sample);
+        try { py.FS.unlink(r.output); } catch (_) {}
+        done++;
+      }
+      const issues = r.report.filter((x) => x.status === "skipped" || x.status === "note");
+      if (r.missing) card.append(el("p", "res-err", "Stále chýba: " + r.missing));
+      if (issues.length) {
+        const ul = el("ul", "res-notes");
+        for (const x of issues) ul.append(el("li", null, (x.char ? x.char + " " + STATUS[x.status] + ": " : "") + sk(x.how)));
+        card.append(ul);
+      }
+      const det = el("details", "res-log");
+      det.append(el("summary", null, "podrobnosti"));
+      const ul = el("ul");
+      for (const x of r.report) if (x.char) ul.append(el("li", null, `${x.char}  ${STATUS[x.status] || x.status}, ${sk(x.how)}`));
+      det.append(ul);
+      card.append(det);
+      try { py.FS.unlink(src); } catch (_) {}
+    }
+    say(done ? "Hotovo. Font si stiahni nižšie." : "Hotovo.");
+    go.disabled = false;
+    label.textContent = "oprav font";
+    results.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+</script>
+</body>
+</html>

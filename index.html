@@ -70,7 +70,7 @@
   <p class="fine" id="fine">Najprv ti príde krátky e-mail, v ktorom potvrdíš, že si to ty. Tvoj e-mail môžem zdieľať s partnermi, s ktorými spolupracujem. Odhlásiť sa môžeš kedykoľvek.</p>
 
 <script>
-  // Google Apps Script web app (see README.md). It saves the email as pending and sends the confirmation email.
+  // Google Apps Script web app (see README.md). With list: "font-tool" it emails the link to the tool right away.
   const SHEET_URL = "https://script.google.com/macros/s/AKfycbwzb0EDm8Rme1YKbwV1A5090Xy8KaP20UOvHCXbhvao1tViq3Yg2vBaLdlMIsiN-4s/exec";
 
   const form = document.getElementById("signup");
@@ -81,8 +81,7 @@
 
   const messages = {
     invalid: "Toto nevyzerá ako e-mailová adresa. Skús niečo ako meno@gmail.com.",
-    pending: "Skoro hotovo. Pozri si schránku (aj spam) a e-mail potvrď kliknutím na odkaz.",
-    already: "Tento e-mail už je v zozname. Nemusíš robiť nič.",
+    sent: "Hotovo. Odkaz na tool ti práve odišiel e-mailom. Pozri si schránku (aj spam).",
     broken: "Niečo sa pokazilo na mojej strane. Skús to prosím neskôr.",
     offline: "Nepodarilo sa to odoslať. Skontroluj pripojenie na internet a skús to znova.",
     soon: "Prihlasovanie čoskoro spustím. Skús to o pár dní.",
@@ -102,9 +101,9 @@
     button.disabled = true;
     label.textContent = "odosielam…";
     status.textContent = "";
-    const body = new URLSearchParams({ email: value, source: location.hostname || "local", consent: "Súhlasil s posielaním súborov a noviniek e-mailom a so zdieľaním e-mailu s partnermi" });
+    const body = new URLSearchParams({ email: value, source: location.hostname || "local", consent: "Súhlasil s posielaním súborov a noviniek e-mailom a so zdieľaním e-mailu s partnermi", list: "font-tool" });
     try {
-      let result = "pending", res = null;
+      let result = "sent", res = null;
       try {
         res = await fetch(SHEET_URL, { method: "POST", body });
       } catch (readError) {
@@ -116,12 +115,12 @@
       }
       if (result === "invalid" || result === "broken") { show(result, true); return; }
       form.classList.add("done");
-      show(result === "already" ? "already" : "pending");
+      show("sent");
     } catch (err) {
       show("offline", true);
     } finally {
       button.disabled = false;
-      label.textContent = "pošli mi súbory";
+      label.textContent = "pošli mi tool";
     }
   });
 </script>

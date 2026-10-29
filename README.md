@@ -1,36 +1,37 @@
-# Jergusino signup page
+# Jergušino Font Tool
 
-A one-page signup site for the Jergusino newsletter, published with GitHub Pages.
-Each email is added to a private Google Sheet ("Newsletter signups" in Google Drive).
-Download it as Excel anytime: File → Download → Microsoft Excel (.xlsx).
+Two pages, published with GitHub Pages at jergusino.com/font-tool/:
 
-## Connect the page to the sheet (about 3 minutes, once)
+- `index.html` (jergusino.com/font-tool/): leave your email, get the tool by email.
+  Every signup gets the link, whether or not the address is already in the sheet.
+- `tool/` (jergusino.com/font-tool/tool/): the tool itself. Upload a .ttf or .otf, it builds
+  the missing Slovak (or Czech / Central European) letters from the font's own parts,
+  shows a before/after preview and gives back the fixed font to download.
 
-1. Open the **Newsletter signups** sheet in Google Drive.
-2. **Extensions → Apps Script.** Delete what's there, paste the contents of
-   [`apps-script/Code.gs`](apps-script/Code.gs), and save.
-3. **Deploy → New deployment → ⚙ → Web app.**
-   - Execute as: **Me**
-   - Who has access: **Anyone**
-4. Click **Deploy**, allow the permissions Google asks for, and copy the **Web app URL**
-   (ends in `/exec`).
-5. In `index.html`, set `const SHEET_URL = "…/exec";` and commit.
+## How the tool works
 
-"Anyone" only lets people *add* a row through the page. Nobody can read the sheet
-unless you share it.
+`tool/font_tool.py` is the original Python script, unchanged. The page runs it in the
+browser with [Pyodide](https://pyodide.org) (Python + fontTools compiled for the web),
+so fonts never leave the visitor's computer. `tool/runner.py` only passes the page's
+options to the script's own `process()` and returns its report.
 
-Until `SHEET_URL` is set, the button shows "Signups open soon."
+To update the tool, replace `tool/font_tool.py` with a new version of the script.
+The first run downloads Pyodide (about 10 MB) from cdn.jsdelivr.net; after that the
+browser caches it.
 
-## Design
+## The email
 
-The page is part of the main site (jergusino.github.io / jergusino.com): same header with
-the logo, same footer, Slovak copy.
+The form posts to the same Google Apps Script as the newsletter (`apps-script/Code.gs`,
+same file as in the newsletter repo), with `list=font-tool`. The script:
 
-- `assets/css/main.css` is a copy of the main site's stylesheet. If the main site's look
-  changes, copy its `assets/css/main.css` here again. `assets/css/newsletter.css` adds the form.
-- `assets/fonts/` and `assets/img/wordmark.svg` are the main site's fonts and logo.
-- Links in the menu (`/`, `/projects/`) point to the main site.
+- writes the signup into the **Font tool** tab of the "Newsletter signups" sheet,
+- emails the link to jergusino.com/font-tool/tool/ straight away (no confirmation step),
+- sends the same address at most one email per 10 minutes.
 
-Licences: Borisna is a demo font, free for private, non-profit use only. Before you sell
-anything through this list, buy the commercial licence from Koplexs Studio.
-Check that your Slithen and Edwardian Script licences cover web use.
+After changing `Code.gs`, paste it into Apps Script and deploy a **New version**
+(Deploy → Manage deployments → pencil → Version: New version).
+
+## Licences
+
+Borisna is a demo font, free for private, non-profit use only. Check that your Slithen
+and Edwardian Script licences cover web use.
