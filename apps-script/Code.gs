@@ -38,7 +38,7 @@ function doPost(e) {
 
     const pending = pendingSheet(book);
     const token = Utilities.getUuid().replace(/-/g, "");
-    pending.appendRow([new Date(), email, token, String(p.source || "").slice(0, 100), String(p.consent || "").slice(0, 200)]);
+    addRow(pending, { "Signed up": new Date(), "Email": email, "Token": token, "Source": String(p.source || "").slice(0, 100), "Consent": String(p.consent || "").slice(0, 200) });
     sendConfirmation(email, token);
     cache.put("sent:" + email, "1", 600);
     return json("pending");
@@ -59,20 +59,20 @@ function doGet(e) {
   try {
     const book = SpreadsheetApp.openById(SHEET_ID);
     const pending = pendingSheet(book);
-    const rows = pending.getLastRow() > 1 ? pending.getRange(2, 1, pending.getLastRow() - 1, 5).getValues() : [];
-    const i = rows.findIndex(r => r[2] === token);
+    const rows = readRows(pending);
+    const i = rows.findIndex(r => r["Token"] === token);
     if (i === -1) return page("ups", "Neplatný odkaz", "Tento odkaz už bol použitý alebo nefunguje. Ak je tvoj e-mail už potvrdený, si v zozname. Ak nie, prihlás sa znova na stránke.");
 
-    const [created, email, , source, consent] = rows[i];
+    const created = rows[i]["Signed up"], email = rows[i]["Email"], source = rows[i]["Source"], consent = rows[i]["Consent"];
     if (Date.now() - new Date(created).getTime() > LINK_HOURS * 3600 * 1000) {
-      pending.deleteRow(i + 2);
+      pending.deleteRow(rows[i]._row);
       return page("ups", "Odkaz vypršal", "Odkazy platia " + LINK_HOURS + " hodín. Prihlás sa znova na stránke a príde ti nový.");
     }
 
     const main = mainSheet(book);
-    if (!listHas(main, email)) main.appendRow([new Date(), email, source, consent, created]);
+    if (!listHas(main, email)) addRow(main, { "Confirmed": new Date(), "Email": email, "Source": source, "Consent": consent, "Signed up": created });
     // Remove every pending row for this email (they may have signed up twice).
-    for (let r = rows.length - 1; r >= 0; r--) if (rows[r][1] === email) pending.deleteRow(r + 2);
+    for (let r = rows.length - 1; r >= 0; r--) if (rows[r]["Email"] === email) pending.deleteRow(rows[r]._row);
     return page("hotovo", "Si v zozname", "Ďakujem za potvrdenie. Prvé súbory ti pošlem na " + email + ".");
   } finally {
     lock.releaseLock();
@@ -90,7 +90,7 @@ function sendTool(email, p) {
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
-    toolSheet(SpreadsheetApp.openById(SHEET_ID)).appendRow([new Date(), email, String(p.source || "").slice(0, 100), String(p.consent || "").slice(0, 200)]);
+    addRow(toolSheet(SpreadsheetApp.openById(SHEET_ID)), { "Sent": new Date(), "Email": email, "Source": String(p.source || "").slice(0, 100), "Consent": String(p.consent || "").slice(0, 200) });
   } finally {
     lock.releaseLock();
   }
@@ -147,10 +147,33 @@ function pendingSheet(book) {
   return s;
 }
 
+// Rows are read and written by column name (the header in row 1), so the columns
+// can be moved or new ones added in the sheet without breaking anything.
+function headers(sheet) {
+  const n = sheet.getLastColumn();
+  return n ? sheet.getRange(1, 1, 1, n).getValues()[0].map(h => String(h).trim()) : [];
+}
+
+function addRow(sheet, values) {
+  const h = headers(sheet);
+  Object.keys(values).forEach(k => {
+    if (h.indexOf(k) === -1) { h.push(k); sheet.getRange(1, h.length).setValue(k); }
+  });
+  sheet.appendRow(h.map(k => (k in values ? values[k] : "")));
+}
+
+function readRows(sheet) {
+  const h = headers(sheet), n = sheet.getLastRow();
+  if (n < 2 || !h.length) return [];
+  return sheet.getRange(2, 1, n - 1, h.length).getValues().map((r, i) => {
+    const o = { _row: i + 2 };
+    h.forEach((k, c) => (o[k] = r[c]));
+    return o;
+  });
+}
+
 function listHas(sheet, email) {
-  const n = sheet.getLastRow();
-  if (n < 2) return false;
-  return sheet.getRange(2, 2, n - 1, 1).getValues().flat().indexOf(email) !== -1;
+  return readRows(sheet).some(r => String(r["Email"]).trim().toLowerCase() === email);
 }
 
 function sendConfirmation(email, token) {
