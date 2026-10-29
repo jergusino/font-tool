@@ -34,10 +34,14 @@
   --yellow: #ffc600;
 
   /* space and type tokens, all worked out from the width W (guide, section 5) */
-  --F: max(12px, calc(100vw / 70));          /* frame: outer margin of loud layouts */
+  /* --W: the width the layout uses. The full screen width, except on very wide, short screens
+     (wider than 1.9 x the height), where everything stays in a centred column of that size. */
+  --W: min(100vw, 190vh);
+  --W: min(100vw, 190svh);
+  --F: max(12px, calc(var(--W) / 70));       /* frame: outer margin of loud layouts */
   --G: calc(var(--F) * 1.4);                 /* gap: script to the thing it introduces */
-  --F4: max(20px, calc(100vw * 4 / 70));     /* margin of text-heavy layouts (4F) */
-  --T: calc(100vw / 21);                     /* text token; headlines use 2T to 4T */
+  --F4: max(20px, calc(var(--W) * 4 / 70));  /* margin of text-heavy layouts (4F) */
+  --T: calc(var(--W) / 21);                  /* text token; headlines use 2T to 4T */
 
   --f-head: "Slithen", "Impact", "Arial Narrow", sans-serif;
   --f-text: "Borisna", Georgia, "Times New Roman", serif;
@@ -100,7 +104,8 @@ a:hover, a:focus-visible { color: var(--yellow); }
 /* one project: no tall empty stage, the title sits just under the header and the text follows */
 .hero--project { min-height: 0; padding-top: calc(var(--F) * 7); }
 .hero--project .lockup { position: static; margin: 0 var(--F); }
-body.project .prose { margin-top: calc(var(--F) * 2); }
+body.project .prose { margin-top: calc(var(--F) * 0.9 - 0.9em); }   /* (pulls up past the empty line space of the big title and the details) */   /* the details sit close under the title… */
+body.project .prose .meta + * { margin-top: calc(var(--F) * 3.2); }   /* …and the description stands apart */
 body.project .back { margin-top: calc(var(--F) * 2); }
 
 .lockup { position: absolute; left: var(--F); right: var(--F); bottom: var(--F); }
@@ -116,7 +121,7 @@ body.project .back { margin-top: calc(var(--F) * 2); }
 .lead.desc { --d: 0.328em; }                        /* g j p q y f */
 
 /* home: the primary lockup (i am + JERGUSINO). Wordmark = W - 2F wide, 0.257 x as tall. */
-.hero--home { --wm-h: calc((100vw - 2 * var(--F)) * 0.257); }
+.hero--home { --wm-h: calc((var(--W) - 2 * var(--F)) * 0.257); }
 .hero--home .lead {
   font-size: calc(var(--wm-h) * 0.771);           /* 0.29 x wordmark height, i-dot to baseline */
   margin-bottom: calc(var(--G) + var(--d) - 0.24em);
@@ -174,7 +179,7 @@ body.project .back { margin-top: calc(var(--F) * 2); }
   display: grid;
   grid-template-columns: repeat(var(--cols), minmax(0, 1fr));
   gap: var(--F);
-  padding-bottom: calc((100vw - 2 * var(--F)) / var(--cols) * 0.72 + var(--F));        /* room for the half-card the even columns hang down */
+  padding-bottom: calc((var(--W) - 2 * var(--F)) / var(--cols) * 0.72 + var(--F));        /* room for the half-card the even columns hang down */
 }
 .pcard:nth-child(even) { transform: translateY(calc(50% + var(--F) / 2)); }
 .pcard a { display: block; position: relative; overflow: hidden; aspect-ratio: 7 / 10; }
@@ -213,7 +218,7 @@ body.project .back { margin-top: calc(var(--F) * 2); }
 .empty { padding: var(--F) 0; }
 
 /* ── Project page: one left-aligned column, 4F margin, about 70 characters wide ─ */
-.prose { margin: var(--F4) 0 0 var(--F); max-width: min(70ch, calc(100vw - 2 * var(--F4))); }
+.prose { margin: var(--F4) 0 0 var(--F); max-width: min(70ch, calc(var(--W) - 2 * var(--F4))); }
 .prose > * + * { margin-top: 1em; }
 .prose a { color: var(--yellow); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 0.2em; }
 .prose a:hover, .prose a:focus-visible { color: var(--cream); }
@@ -239,21 +244,28 @@ body.project .back { margin-top: calc(var(--F) * 2); }
 
 .back { margin: calc(var(--F) * 3) 0 0 var(--F); }
 
-/* ── Footer: quiet, one small centred thing ────────────────────────────────── */
-.foot {
-  min-height: 0;
-  display: grid; grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; gap: 0.6em;
-  margin-top: calc(var(--F) * 6); padding: 0 0 calc(var(--F) * 12);
+/* ── Contact page: loud headline, then the ways to reach me as large rows ─────
+   One column at the F edge, Cream text, Yellow only on the pointers (@, arrows, the active copy). */
+.contact { padding: calc(var(--F) * 2) var(--F) calc(var(--F) * 2); }
+.contact-intro { max-width: 34ch; font-size: clamp(1.1rem, min(2vw, 3.4vh), 2rem); line-height: 1.3; margin-bottom: calc(var(--F) * 3); }
+.contact-list { list-style: none; border-top: 1px solid var(--yellow); }
+.contact-row {
+  display: grid; grid-template-columns: minmax(7em, 14%) minmax(0, 1fr) auto; align-items: baseline; gap: var(--F);
+  padding: calc(var(--F) * 1.2) 0; border-bottom: 1px solid var(--yellow);
 }
-.foot::before {                                      /* a thin Yellow line across the page as the divider */
-  content: ""; display: block; justify-self: stretch; height: 2px; background: var(--yellow);
-  margin-bottom: calc(var(--F) * 4);
+.contact-label { font-family: var(--f-script); color: var(--yellow); font-size: clamp(1.4rem, min(2.6vw, 4.4vh), 2.8rem); line-height: 1; }
+.contact-value { font-size: clamp(1.5rem, min(4.4vw, 7vh), 5rem); line-height: 1.05; overflow-wrap: anywhere; }
+.contact-value .at { color: var(--yellow); }
+.contact-copy, .contact-go {
+  font: inherit; font-size: clamp(1rem, 1.4vw, 1.4rem); color: var(--cream); background: none; border: 0; border-radius: 0; padding: 0; cursor: pointer;
 }
-.handle { font-size: clamp(1.3rem, calc(100vw / 30), 3.4rem); line-height: 1; overflow-wrap: anywhere; }
-.handle a:hover, .handle a:focus-visible { color: var(--yellow); }
-.handle .at { color: var(--yellow); }
-.social { font-size: var(--body); }
-.social { list-style: none; display: flex; gap: 1.4em; flex-wrap: wrap; justify-content: center; }
+.contact-copy:hover, .contact-copy:focus-visible, .contact-go:hover { color: var(--yellow); }
+.contact-go .arr { width: clamp(1.6rem, 2.4vw, 2.6rem); height: auto; margin: 0; }
+.contact-row:hover .contact-value { color: var(--yellow); }
+@media (max-width: 640px) {
+  .contact-row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 0.3em; }
+  .contact-label { grid-column: 1 / -1; }
+}
 
 /* ── Motion: the title-card animation, copied frame by frame from title-card-jergusino.mp4 ──
    0.11 s of Ink, then the letters rise one by one from the baseline (a new one every 0.02 s,
@@ -287,7 +299,7 @@ body.project .back { margin-top: calc(var(--F) * 2); }
 
 
 /* home: the poster wall is cut off hard after about two rows, then one big line leads to all projects */
-.wall { --cols: 6; --cw: calc((100vw - (var(--cols) + 1) * var(--F)) / var(--cols)); max-height: calc(var(--cw) * 10 / 7 * 2.4); overflow: hidden; }
+.wall { --cols: 6; --cw: calc((var(--W) - (var(--cols) + 1) * var(--F)) / var(--cols)); max-height: calc(var(--cw) * 10 / 7 * 2.4); overflow: hidden; }
 @media (max-width: 1279px) { .wall { --cols: 5; } }
 @media (max-width: 999px) { .wall { --cols: 3; } }
 @media (max-width: 640px) { .wall { --cols: 2; } }
@@ -347,3 +359,93 @@ html.viewer-open, html.viewer-open body { overflow: hidden; }
 .viewer .arr { width: 1.3em; height: auto; fill: var(--yellow); }
 .viewer .arr--back { transform: scaleX(-1); }
 @media (max-width: 520px) { .viewer button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } .viewer .arr { width: 2em; } }
+
+/* ── Project page ─────────────────────────────────────────────────────────────
+   Phones and tablets: title, info, then the work, one column (swipe left / right for the next project).
+   Wide screens: the info on the left, the work on the right, centred on each other, with the
+   previous / next arrows right beside them. Everything is sized by the width but capped by the
+   screen height, so the info and the whole poster always fit on screen. */
+body.project { --ts: min(calc(var(--T) * 3), 13vh); }                 /* base size; the poster follows it */
+body.project .hero--page { --title-size: calc(var(--ts) * 1.8); }   /* the title is 180% of the base */
+body.project .hero--page .lead { font-size: calc(var(--ts) * 1.2 * 0.54); }   /* the lead keeps its size */
+body.project .meta, body.project .back { font-size: clamp(1.1rem, min(2.4vw, 4vh), 2.6rem); }
+body.project .prose { font-size: min(var(--body), 2.8vh); font-size: clamp(0.95rem, min(var(--body), 2.8vh), 1.375rem); }
+@media (max-width: 520px) { body.project { --ts: min(calc(var(--T) * 3.4), 13vh); } }
+
+.project-media { margin: calc(var(--F) * 2) var(--F) 0; }
+.project-media img { display: block; max-width: 100%; height: auto; }
+.media-main > :first-child { margin-top: 0; }
+.project-media .cover img { max-height: calc((100vh - var(--F) * 2) * 0.8); max-height: calc((100svh - var(--F) * 2) * 0.8); width: auto; max-width: 100%; margin: 0; }
+.project-media .cover .zoom { width: fit-content; max-width: 100%; }
+.arr--back { transform: scaleX(-1); }
+
+/* previous / next arrows. On screens with empty bars at the sides (wider than 1.9 x the height) they
+   always stand in those bars. Otherwise they are hidden and cut on in front of the content when the
+   mouse comes to the left or right edge of the screen. Phones and tablets swipe instead. */
+.page-arrow { display: none; color: var(--yellow); }
+.page-arrow .arr { width: clamp(1.6rem, min(2.6vw, 4.5vh), 2.8rem); height: auto; margin: 0; fill: currentColor; vertical-align: 0; }
+@media (min-width: 900px) and (hover: hover) {
+  .page-arrow {
+    display: flex; align-items: center; justify-content: center;
+    position: fixed; z-index: 4; top: 0; bottom: 0; width: max(48px, 5vw);
+    overflow: hidden; color: var(--yellow); outline: none;
+  }
+  .page-arrow--prev { left: 0; }
+  .page-arrow--next { right: 0; }
+  /* the Ink strip and the arrow slide in from behind the screen edge (Move: soft landing; exits accelerate) */
+  .page-arrow::before { content: ""; position: absolute; inset: 0; background: var(--ink); }
+  .page-arrow::before, .page-arrow .arr {
+    transition: transform 0.2s cubic-bezier(0.6, 0, 1, 1);
+  }
+  .page-arrow--prev::before, .page-arrow--prev .arr { transform: translateX(-101%); }
+  .page-arrow--prev .arr { transform: translateX(calc(-1 * max(48px, 5vw))) scaleX(-1); }
+  .page-arrow--next::before { transform: translateX(101%); }
+  .page-arrow--next .arr { transform: translateX(max(48px, 5vw)); }
+  .page-arrow .arr { position: relative; }
+  .page-arrow:hover::before, .page-arrow:focus-visible::before { transform: none; transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1); }
+  .page-arrow:hover .arr, .page-arrow:focus-visible .arr { transition: transform 0.4s cubic-bezier(0.2, 0, 0, 1) 0.04s; }
+  .page-arrow--prev:hover .arr, .page-arrow--prev:focus-visible .arr { transform: scaleX(-1); }
+  .page-arrow--next:hover .arr, .page-arrow--next:focus-visible .arr { transform: none; }
+  .page-arrow:focus-visible .arr { outline: 2px solid var(--yellow); outline-offset: 2px; }
+}
+@media (min-width: 900px) and (hover: hover) and (prefers-reduced-motion: reduce) {
+  .page-arrow::before, .page-arrow .arr { transition: none !important; }
+}
+@media (min-width: 900px) and (min-aspect-ratio: 19/10) {
+  .page-arrow { width: calc((100vw - var(--W)) / 2); top: 0; bottom: 0; }
+  .page-arrow::before { display: none; }
+  .page-arrow--prev .arr, .page-arrow--prev:hover .arr { transform: scaleX(-1); }
+  .page-arrow--next .arr, .page-arrow--next:hover .arr { transform: none; }
+  .page-arrow:hover { color: var(--cream); }
+}
+
+@media (min-width: 900px) {
+  .project-body {
+    /* very wide, short screens: everything stays together in the middle, sized to that middle */
+    --ts: min(calc(var(--T) * 3), 13vh);
+    --top: min(calc(var(--F) * 7), 16vh);
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: calc(var(--F) * 3); align-items: center;
+    padding: var(--top) var(--F) 0;
+    position: relative;
+  }
+  .project-text .hero--project { padding-top: 0; }
+  .project-text .hero--project .lockup { margin: 0; }
+  .project-body .prose { max-width: 70ch; margin-left: 0; }
+  .project-media { margin: 0; display: grid; justify-items: end; }
+  .media-main { display: grid; justify-items: end; }
+  .project-media .cover .zoom { display: block; }
+  /* the poster scales like the text: with the title size, but never taller than the screen */
+  .project-media .cover img {
+    max-width: 100%;
+    max-height: calc(min(calc(var(--ts) * 5), calc((100vh - var(--top) - var(--F) * 2) * 0.8)) - 7rem);
+    max-height: calc(min(calc(var(--ts) * 5), calc((100svh - var(--top) - var(--F) * 2) * 0.8)) - 7rem);
+    margin: 7rem 0 0;
+  }
+}
+
+/* everything sits in the --W column, centred (only narrower than the screen on very wide, short screens) */
+main { max-width: var(--W); margin: 0 auto; }
+.top { left: max(var(--F), calc((100% - var(--W)) / 2 + var(--F))); right: max(var(--F), calc((100% - var(--W)) / 2 + var(--F))); }
+main { padding-bottom: calc(var(--F) * 6); }   /* no footer: a little Ink after the last thing on the page */
+body.project { overflow-x: clip; }   /* the page slides sideways on a swipe without a sideways scrollbar */
