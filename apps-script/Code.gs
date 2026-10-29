@@ -34,7 +34,7 @@ function doPost(e) {
   lock.waitLock(10000);
   try {
     const book = SpreadsheetApp.openById(SHEET_ID);
-    if (listHas(mainSheet(book), email)) return json("already"); // already confirmed: no new email
+    if (listHas(mainSheet(book), email, "newsletter")) return json("already"); // already confirmed: no new email
 
     const pending = pendingSheet(book);
     const token = Utilities.getUuid().replace(/-/g, "");
@@ -70,7 +70,7 @@ function doGet(e) {
     }
 
     const main = mainSheet(book);
-    if (!listHas(main, email)) addRow(main, { "Confirmed": new Date(), "Email": email, "Source": source, "Consent": consent, "Signed up": created });
+    if (!listHas(main, email, "newsletter")) addRow(main, { "Confirmed": new Date(), "Email": email, "Source": source, "Consent": consent, "Signed up": created, "List": "newsletter" });
     // Remove every pending row for this email (they may have signed up twice).
     for (let r = rows.length - 1; r >= 0; r--) if (rows[r]["Email"] === email) pending.deleteRow(rows[r]._row);
     return page("hotovo", "Si v zozname", "Ďakujem za potvrdenie. Prvé súbory ti pošlem na " + email + ".");
@@ -81,16 +81,17 @@ function doGet(e) {
 
 // ---------- Font Tool ----------
 
-// Sends the link to the Font Tool right away (no confirmation step) and writes the
-// signup into the "Font tool" tab. The same address gets at most one email per
-// 10 minutes, so nobody can flood someone else's inbox through the form.
+// Sends the link to the Font Tool every time someone asks for it, even if the same
+// address asked before. The address is written once into the Subscribers tab with
+// List = "font-tool" (asking again does not add a second row).
 function sendTool(email, p) {
-  const cache = CacheService.getScriptCache();
-  if (cache.get("tool:" + email)) return json("sent");
   const lock = LockService.getScriptLock();
   lock.waitLock(10000);
   try {
-    addRow(toolSheet(SpreadsheetApp.openById(SHEET_ID)), { "Sent": new Date(), "Email": email, "Source": String(p.source || "").slice(0, 100), "Consent": String(p.consent || "").slice(0, 200) });
+    const main = mainSheet(SpreadsheetApp.openById(SHEET_ID));
+    if (!listHas(main, email, "font-tool")) {
+      addRow(main, { "Signed up": new Date(), "Email": email, "Source": String(p.source || "").slice(0, 100), "Consent": String(p.consent || "").slice(0, 200), "List": "font-tool" });
+    }
   } finally {
     lock.releaseLock();
   }
@@ -106,26 +107,17 @@ function sendTool(email, p) {
     '<p style="margin:0;font-size:14px;line-height:1.5;color:#FAF1D6">Odkaz si ulož, funguje stále.</p>' +
     '</div>';
   sendMail(email, "Tvoj Font Tool od Jergušina", text, html);
-  cache.put("tool:" + email, "1", 600);
   return json("sent");
-}
-
-function toolSheet(book) {
-  let s = book.getSheetByName("Font tool");
-  if (!s) {
-    s = book.insertSheet("Font tool");
-    s.appendRow(["Sent", "Email", "Source", "Consent"]);
-  }
-  return s;
 }
 
 // ---------- Helpers ----------
 
-// The confirmed list lives in the tab named "Subscribers" (found by name, so other
-// tabs, like a linked Google Form, can't get in the way). The first time, the
+// Everyone lives in one tab, "Subscribers" (found by name, so other tabs, like a
+// linked Google Form, can't get in the way). The List column says what they signed
+// up for: "newsletter" (confirmed by email) or "font-tool" (got the Font Tool link). The first time, the
 // original "Untitled" tab is renamed to "Subscribers" so existing signups stay.
 const MAIN_TAB = "Subscribers";
-const MAIN_HEADER = ["Confirmed", "Email", "Source", "Consent", "Signed up"];
+const MAIN_HEADER = ["Confirmed", "Email", "Source", "Consent", "Signed up", "List"];
 
 function mainSheet(book) {
   let s = book.getSheetByName(MAIN_TAB);
@@ -172,8 +164,11 @@ function readRows(sheet) {
   });
 }
 
-function listHas(sheet, email) {
-  return readRows(sheet).some(r => String(r["Email"]).trim().toLowerCase() === email);
+// Is this address already in the Subscribers tab for this list? Rows without a List
+// value are newsletter subscribers from before the column existed.
+function listHas(sheet, email, list) {
+  return readRows(sheet).some(r =>
+    String(r["Email"]).trim().toLowerCase() === email && (String(r["List"] || "newsletter").trim() || "newsletter") === list);
 }
 
 function sendConfirmation(email, token) {

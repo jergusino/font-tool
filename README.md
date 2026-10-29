@@ -24,9 +24,10 @@ browser caches it.
 The form posts to the same Google Apps Script as the newsletter (`apps-script/Code.gs`,
 same file as in the newsletter repo), with `list=font-tool`. The script:
 
-- writes the signup into the **Font tool** tab of the "Newsletter signups" sheet,
-- emails the link to jergusino.com/font-tool/tool/ straight away (no confirmation step),
-- sends the same address at most one email per 10 minutes.
+- writes the signup into the **Subscribers** tab of the "Newsletter signups" sheet, with
+  **List** = `font-tool` (once per address; newsletter subscribers have `newsletter`),
+- emails the link to jergusino.com/font-tool/tool/ straight away, every time it is asked for,
+  even if the address is already in the sheet (no confirmation step).
 
 After changing `Code.gs`, paste it into Apps Script and deploy a **New version**
 (Deploy → Manage deployments → pencil → Version: New version).
