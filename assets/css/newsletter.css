@@ -47,3 +47,14 @@ a.cta { animation: none; }
 .fine a { color: var(--paper); text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: 0.2em; }
 
 @media (max-width: 560px) { .signup button.cta { flex: 1 1 100%; } }
+
+.prose a.cta, .prose a.cta:hover { color: var(--ink); text-decoration: none; }
+
+/* wide screens: title on the left, text and form on the right, so the page isn't all on one side */
+@media (min-width: 1000px) {
+  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, calc(36rem + var(--m))); column-gap: var(--m); align-items: start; }
+  main > .sec-head { grid-column: 1; grid-row: 1; padding-right: 0; }
+  main > .split { grid-column: 2; grid-row: 1; max-width: none; margin: 0; padding: clamp(110px, 17vh, 190px) var(--m) 0 0; }
+  main > :not(.sec-head):not(.split) { grid-column: 1 / -1; }
+  .fine { max-width: none; padding-left: max(var(--m), calc(100% - 36rem - var(--m))); }
+}
