@@ -50,11 +50,13 @@ a.cta { animation: none; }
 
 .prose a.cta, .prose a.cta:hover { color: var(--ink); text-decoration: none; }
 
-/* wide screens: title on the left, text and form on the right, so the page isn't all on one side */
+/* wide screens: title on the left, text and form on the right, the pair centred so there is no big gap */
 @media (min-width: 1000px) {
-  main { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, calc(36rem + var(--m))); column-gap: var(--m); align-items: start; }
-  main > .sec-head { grid-column: 1; grid-row: 1; padding-right: 0; }
-  main > .split { grid-column: 2; grid-row: 1; max-width: none; margin: 0; padding: clamp(110px, 17vh, 190px) var(--m) 0 0; }
+  main { --gp: clamp(40px, 5vw, 110px); display: grid; grid-template-columns: minmax(var(--m), 1fr) minmax(0, 28rem) var(--gp) minmax(0, 36rem) minmax(var(--m), 1fr); align-items: start; }
+  main > .sec-head { grid-column: 2; grid-row: 1; padding: clamp(110px, 17vh, 190px) 0 0; }
+  main > .sec-head .h--xl { font-size: clamp(3rem, 5vw, 5.5rem); }
+  main > .split { grid-column: 4; grid-row: 1; max-width: none; margin: 0; padding: clamp(110px, 17vh, 190px) 0 0; }
   main > :not(.sec-head):not(.split) { grid-column: 1 / -1; }
-  .fine { max-width: none; padding-left: max(var(--m), calc(100% - 36rem - var(--m))); }
+  .fine { max-width: none; padding-left: max(var(--m), calc(50% - 4rem + clamp(40px, 5vw, 110px) / 2)); padding-right: var(--m); }
+  .fine > span { max-width: 36rem; }
 }
