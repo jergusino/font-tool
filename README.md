@@ -34,5 +34,4 @@ After changing `Code.gs`, paste it into Apps Script and deploy a **New version**
 
 ## Licences
 
-Borisna is a demo font, free for private, non-profit use only. Check that your Slithen
-and Edwardian Script licences cover web use.
+The page's fonts (Bricolage Grotesque, DM Mono) are open source (SIL OFL).

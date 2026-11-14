@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Font Tool · Jergušino</title>
   <meta name="description" content="Šablóny, textúry a presety od Jergušina zadarmo do tvojej schránky. Jeden krátky e-mail týždenne.">
-  <meta name="theme-color" content="#060909">
+  <meta name="theme-color" content="#0E0E0E">
   <meta name="color-scheme" content="dark">
   <meta property="og:site_name" content="Jergušino">
   <meta property="og:title" content="Newsletter · Jergušino">
@@ -14,9 +14,9 @@
   <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
-  <link rel="preload" href="assets/fonts/Slithen.woff" as="font" type="font/woff" crossorigin>
-  <link rel="preload" href="assets/fonts/Borisna.woff" as="font" type="font/woff" crossorigin>
-  <!-- main.css is a copy of the main site's stylesheet (jergusino.github.io/assets/css/main.css); newsletter.css adds the form -->
+  <link rel="preload" href="assets/fonts/BricolageGrotesque-ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/BricolageGrotesque-Medium.woff2" as="font" type="font/woff2" crossorigin>
+  <!-- main.css is a copy of the main site's stylesheet (jergusino.github.io/assets/css/main.css); the other css files add this page's own parts -->
   <link rel="stylesheet" href="assets/css/main.css">
   <link rel="stylesheet" href="assets/css/newsletter.css">
 </head>
@@ -24,40 +24,40 @@
   <a class="skip" href="#top">preskočiť na obsah</a>
 
   <header class="top">
-    <a class="top-mark" href="/" aria-label="Jergušino, domov">
-      <img src="assets/img/wordmark.svg" alt="" width="1020" height="262">
+    <a class="brand" href="/" aria-label="Jergušino, domov">
+      <img class="logo-paper" src="assets/img/logo-paper.svg" alt="" width="570" height="112">
+      <img class="logo-ink" src="assets/img/logo-ink.svg" alt="" width="570" height="112">
     </a>
-    <nav class="top-nav" aria-label="Hlavná navigácia">
-      <a href="/projects/">projekty <svg class="arr" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg></a>
-      <a href="/kontakt/">kontakt</a>
+    <button type="button" class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="site-nav"><span></span><span></span></button>
+    <nav class="nav" id="site-nav" aria-label="Hlavná navigácia">
+      <a class="pill" href="/plagaty/">Plagáty</a>
+      <a class="pill" href="/spoluprace/">Spolupráce</a>
+      <a class="pill" href="/kontakt/">Kontakt</a>
     </nav>
   </header>
 
   <main id="top" tabindex="-1">
-    <div class="split">
-    <section class="hero hero--page hero--project">
-      <div class="lockup">
-        <p class="lead desc">tvoj</p>
-        <h1 class="title">Font Tool</h1>
-      </div>
+    <section class="sec-head sec-head--page">
+      <p class="label">tvoj</p>
+      <h1 class="h h--xl">Font Tool</h1>
     </section>
-
+    <div class="split">
     <article class="prose">
       <p class="big">Tvoj tool na tvorenie slovenských písmen s fontov je už na ceste.</p>
 
       <ul class="perks">
-        <li><svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg><span>tvorba písmen z fontu</span></li>
-        <li><svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg><span>jeden krátky e-mail týždenne, nikdy viac</span></li>
-        <li><svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg><span>odhlásiš sa kedykoľvek, stačí odpísať „odhlásiť“</span></li>
+        <li><svg class="arr" viewBox="0 0 48 24" width="24" height="12" aria-hidden="true" focusable="false"><path d="M2 12h40M31 2l11 10-11 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter"/></svg><span>tvorba písmen z fontu</span></li>
+        <li><svg class="arr" viewBox="0 0 48 24" width="24" height="12" aria-hidden="true" focusable="false"><path d="M2 12h40M31 2l11 10-11 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter"/></svg><span>jeden krátky e-mail týždenne, nikdy viac</span></li>
+        <li><svg class="arr" viewBox="0 0 48 24" width="24" height="12" aria-hidden="true" focusable="false"><path d="M2 12h40M31 2l11 10-11 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter"/></svg><span>odhlásiš sa kedykoľvek, stačí odpísať „odhlásiť“</span></li>
       </ul>
 
       <form id="signup" class="signup" method="post" novalidate>
         <label for="email">Tvoj e-mail</label>
         <div class="row">
           <input id="email" name="email" type="email" autocomplete="email" inputmode="email" required aria-describedby="fine status">
-          <button type="submit">
+          <button type="submit" class="cta">
             <span class="btn-text">pošli mi tool</span>
-            <svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg>
+            <svg class="arr" viewBox="0 0 48 24" width="24" height="12" aria-hidden="true" focusable="false"><path d="M2 12h40M31 2l11 10-11 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter"/></svg>
           </button>
         </div>
         <div class="hp" aria-hidden="true"><input type="text" name="website" tabindex="-1" autocomplete="off"></div>
@@ -68,6 +68,13 @@
   </main>
 
   <p class="fine" id="fine"><span>Najprv ti príde krátky e-mail, v ktorom potvrdíš, že si to ty. Tvoj e-mail môžem zdieľať s partnermi, s ktorými spolupracujem. Odhlásiť sa môžeš kedykoľvek.</span></p>
+
+  <section class="closing" aria-labelledby="closing-h">
+    <div class="closing-ast spin" aria-hidden="true"><svg class="ast" viewBox="0 0 200 200" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="34" stroke-linecap="round"><line x1="100" y1="172" x2="100" y2="28"/><line x1="37.65" y1="136" x2="162.35" y2="64"/><line x1="162.35" y1="136" x2="37.65" y2="64"/></g></svg></div>
+    <p class="label">Spolupráca alebo&nbsp;otázka</p>
+    <h2 id="closing-h" class="display">Žltá medzi<br>sivými.</h2>
+    <a class="btn" href="/kontakt/"><span class="circ"><svg class="arr" viewBox="0 0 48 24" width="24" height="12" aria-hidden="true" focusable="false"><path d="M2 12h40M31 2l11 10-11 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter"/></svg></span><span class="btn-t">Napíš mi</span></a>
+  </section>
 
 <script>
   // Google Apps Script web app (see README.md). With list: "font-tool" it emails the link to the tool right away.
@@ -124,5 +131,6 @@
     }
   });
 </script>
+  <script src="assets/js/nav.js" defer></script>
 </body>
 </html>

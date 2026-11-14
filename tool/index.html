@@ -6,12 +6,12 @@
   <title>Font Tool · Jergušino</title>
   <meta name="description" content="Dorob do fontu chýbajúce slovenské písmená. Priamo v prehliadači.">
   <meta name="robots" content="noindex">
-  <meta name="theme-color" content="#060909">
+  <meta name="theme-color" content="#0E0E0E">
   <meta name="color-scheme" content="dark">
   <link rel="icon" href="../favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
-  <link rel="preload" href="../assets/fonts/Slithen.woff" as="font" type="font/woff" crossorigin>
-  <link rel="preload" href="../assets/fonts/Borisna.woff" as="font" type="font/woff" crossorigin>
+  <link rel="preload" href="../assets/fonts/BricolageGrotesque-ExtraBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/BricolageGrotesque-Medium.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="../assets/css/main.css">
   <link rel="stylesheet" href="../assets/css/newsletter.css">
   <link rel="stylesheet" href="../assets/css/tool.css">
@@ -20,25 +20,25 @@
   <a class="skip" href="#top">preskočiť na obsah</a>
 
   <header class="top">
-    <a class="top-mark" href="/" aria-label="Jergušino, domov">
-      <img src="../assets/img/wordmark.svg" alt="" width="1020" height="262">
+    <a class="brand" href="/" aria-label="Jergušino, domov">
+      <img class="logo-paper" src="../assets/img/logo-paper.svg" alt="" width="570" height="112">
+      <img class="logo-ink" src="../assets/img/logo-ink.svg" alt="" width="570" height="112">
     </a>
-    <nav class="top-nav" aria-label="Hlavná navigácia">
-      <a href="/projects/">projekty <svg class="arr" viewBox="0 0 24 12" width="24" height="12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg></a>
-      <a href="/kontakt/">kontakt</a>
+    <button type="button" class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="site-nav"><span></span><span></span></button>
+    <nav class="nav" id="site-nav" aria-label="Hlavná navigácia">
+      <a class="pill" href="/plagaty/">Plagáty</a>
+      <a class="pill" href="/spoluprace/">Spolupráce</a>
+      <a class="pill" href="/kontakt/">Kontakt</a>
     </nav>
   </header>
 
   <main id="top" tabindex="-1">
+    <section class="sec-head sec-head--page">
+      <p class="label">tvoj</p>
+      <h1 class="h h--xl">Font Tool</h1>
+    </section>
     <div class="split">
-      <section class="hero hero--page hero--project">
-        <div class="lockup">
-          <p class="lead desc">tvoj</p>
-          <h1 class="title">Font Tool</h1>
-        </div>
-      </section>
-
-      <article class="prose">
+    <article class="prose">
         <p class="big">Nahraj font a tool doň dorobí chýbajúce slovenské písmená z jeho vlastných častí.</p>
         <p class="intro">Mäkčeň vezme zo Š, dĺžeň z É a ď, ľ, ť dostanú apostrof z písma. Font sa spracuje priamo v tvojom prehliadači a nikam sa neodosiela.</p>
 
@@ -58,7 +58,7 @@
               <label><input type="radio" name="charset" value="czech"> čeština</label>
               <label><input type="radio" name="charset" value="ce"> stredná Európa</label>
             </div>
-            <label class="field">alebo len tieto písmená
+            <label class="tfield">alebo len tieto písmená
               <input id="chars" type="text" autocomplete="off" spellcheck="false" placeholder="napríklad ŕĺ">
             </label>
           </fieldset>
@@ -70,19 +70,19 @@
               <label><input type="radio" name="lcaron" value="apostrophe" checked> s apostrofom</label>
               <label><input type="radio" name="lcaron" value="caron"> s háčikom</label>
             </div>
-            <label class="field">Nový názov rodiny písma (aby si mohol mať nainštalované obe verzie)
+            <label class="tfield">Nový názov rodiny písma (aby si mohol mať nainštalované obe verzie)
               <input id="rename" type="text" autocomplete="off" placeholder="napríklad Slithen SK">
             </label>
-            <label class="field">Veľkosť apostrofu pri ď ľ ť: <output id="scale-out">0.9</output>
+            <label class="tfield">Veľkosť apostrofu pri ď ľ ť: <output id="scale-out">0.9</output>
               <input id="scale" type="range" min="0.6" max="1.2" step="0.05" value="0.9">
             </label>
             <label class="check"><input id="kerning" type="checkbox" checked> skopírovať kerning zo základných písmen</label>
             <label class="check"><input id="winascent" type="checkbox"> zvýšiť winAscent (staré Windows aplikácie neorežú vysoké akcenty, zmení sa ale riadkovanie)</label>
           </details>
 
-          <button type="submit" id="go">
+          <button type="submit" id="go" class="cta">
             <span class="btn-text">oprav font</span>
-            <svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg>
+            <svg class="arr" viewBox="0 0 48 24" width="24" height="12" aria-hidden="true" focusable="false"><path d="M2 12h40M31 2l11 10-11 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter"/></svg>
           </button>
           <p class="status" id="status" role="status" aria-live="polite"></p>
         </form>
@@ -93,6 +93,13 @@
   </main>
 
   <p class="fine">Pred úpravou skontroluj licenciu fontu: niektoré licencie úpravy zakazujú. Nepodporované sú variabilné fonty a písmená so znamienkom pod písmenom (ą, ę, ł).</p>
+
+  <section class="closing" aria-labelledby="closing-h">
+    <div class="closing-ast spin" aria-hidden="true"><svg class="ast" viewBox="0 0 200 200" aria-hidden="true" focusable="false"><g fill="none" stroke="currentColor" stroke-width="34" stroke-linecap="round"><line x1="100" y1="172" x2="100" y2="28"/><line x1="37.65" y1="136" x2="162.35" y2="64"/><line x1="162.35" y1="136" x2="37.65" y2="64"/></g></svg></div>
+    <p class="label">Spolupráca alebo&nbsp;otázka</p>
+    <h2 id="closing-h" class="display">Žltá medzi<br>sivými.</h2>
+    <a class="btn" href="/kontakt/"><span class="circ"><svg class="arr" viewBox="0 0 48 24" width="24" height="12" aria-hidden="true" focusable="false"><path d="M2 12h40M31 2l11 10-11 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter"/></svg></span><span class="btn-t">Napíš mi</span></a>
+  </section>
 
 <script>
   // Runs font_tool.py (the original Python script) in the browser with Pyodide.
@@ -248,7 +255,7 @@
         a.href = URL.createObjectURL(blob);
         a.download = r.name;
         a.append(document.createTextNode("stiahni " + r.name + " "));
-        a.insertAdjacentHTML("beforeend", '<svg class="arr" viewBox="0 0 24 12" aria-hidden="true" focusable="false"><path d="M0 5h18V0l6 6-6 6V7H0z"/></svg>');
+        a.insertAdjacentHTML("beforeend", '<svg class="arr" viewBox="0 0 48 24" width="24" height="12" aria-hidden="true" focusable="false"><path d="M2 12h40M31 2l11 10-11 10" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="butt" stroke-linejoin="miter"/></svg>');
         card.append(a);
         const pv = el("div", "pvs");
         card.append(pv);
@@ -277,5 +284,6 @@
     results.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 </script>
+  <script src="../assets/js/nav.js" defer></script>
 </body>
 </html>

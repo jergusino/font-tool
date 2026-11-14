@@ -1,59 +1,49 @@
-/* Newsletter page: the main site's stylesheet (main.css) plus the signup form.
-   Same tokens, same three colours, no rounded corners, no fills. */
+/* Signup / sub-page parts on top of the main site's stylesheet (main.css). Same tokens: ink, paper, yellow. */
 
-body.newsletter .prose { margin-top: calc(var(--F) * 2); }
-.prose .big { font-size: clamp(1.4rem, 2.4vw, 2.6rem); line-height: 1.15; max-width: 30ch; }
+.split { max-width: 50rem; margin: 0 0 0 0; padding: 0 var(--m); }
+.split .prose { margin-top: 0; }
+.prose .big { font-size: clamp(1.4rem, 2.4vw, 2.2rem); line-height: 1.2; letter-spacing: -0.02em; color: var(--paper); font-weight: 500; max-width: 30ch; }
+.prose .intro { max-width: 46ch; }
 
-.perks { list-style: none; margin-top: 1.6em; }
-.perks li { display: flex; align-items: baseline; gap: 0.7em; }
-.perks li + li { margin-top: 0.35em; }
-.perks .arr { flex: none; margin: 0; }
+.perks { list-style: none; margin-top: 1.6em; display: grid; gap: 0.7em; }
+.perks li { display: flex; align-items: baseline; gap: 0.8em; color: var(--paper-soft); }
+.perks .arr { flex: none; margin: 0; width: 1.2em; height: 0.6em; color: var(--yellow); }
 
 .signup { margin-top: 2.4em; }
-.signup label { display: block; margin-bottom: 0.4em; }
+.signup > label:not(.consent) { display: block; margin-bottom: 0.6em; font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ash); }
 .signup .row { display: flex; gap: 12px; flex-wrap: wrap; }
 .signup input[type="email"] {
-  flex: 1 1 16em; min-width: 0; height: 58px;
-  font: inherit; color: var(--cream); caret-color: var(--yellow);
-  background: var(--ink); border: 2px solid var(--cream); border-radius: 0;
-  padding: 0 16px; outline: none; -webkit-appearance: none; appearance: none;
+  flex: 1 1 16em; min-width: 0; height: 56px; font: inherit; color: var(--paper); caret-color: var(--yellow);
+  background: transparent; border: 0; border-radius: 999px; box-shadow: inset 0 0 0 2px var(--line);
+  padding: 0 24px; outline: none; -webkit-appearance: none; appearance: none; transition: box-shadow 0.2s;
 }
-.signup input[type="email"]:hover, .signup input[type="email"]:focus { border-color: var(--yellow); }
-.signup input:-webkit-autofill { -webkit-text-fill-color: var(--cream); -webkit-box-shadow: 0 0 0 100px var(--ink) inset; }
-.signup button {
-  height: 58px; padding: 0 22px;
-  font: inherit; color: var(--cream); background: var(--ink);
-  border: 2px solid var(--cream); border-radius: 0; cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center; gap: 0.5em; white-space: nowrap;
-}
-.signup button .arr { margin: 0; }
-.signup button:hover, .signup button:focus-visible { color: var(--yellow); border-color: var(--yellow); }
-.signup button[disabled] { cursor: progress; }
+.signup input[type="email"]:hover { box-shadow: inset 0 0 0 2px var(--stone); }
+.signup input[type="email"]:focus { box-shadow: inset 0 0 0 2px var(--yellow); }
+.signup input:-webkit-autofill { -webkit-text-fill-color: var(--paper); -webkit-box-shadow: 0 0 0 100px var(--ink) inset, inset 0 0 0 2px var(--line); }
+button.cta { border: 0; cursor: pointer; font-family: inherit; animation: none; white-space: nowrap; justify-content: center; }
+button.cta[disabled] { cursor: progress; opacity: 0.7; }
+a.cta { animation: none; }
 
-/* small print: quiet grey (outside the brand palette on purpose), at the very bottom of the page (the site has no footer) */
-.fine { max-width: var(--W); margin: 0 auto; padding: calc(var(--F) * 2) var(--F) calc(var(--F) * 4); box-sizing: border-box; font-size: 0.875rem; line-height: 1.45; color: #8c897c; }
-.fine > span { display: block; max-width: 60ch; }
-.status { margin-top: 0.9em; min-height: 1.3em; }
+.signup .consent { display: flex; align-items: flex-start; gap: 0.8em; margin: 1.1em 0 0; max-width: 40em; font-size: 0.95rem; line-height: 1.45; cursor: pointer; color: var(--paper-soft); }
+.signup .consent input, input[type="checkbox"] {
+  flex: none; width: 24px; height: 24px; margin: 0.05em 0 0; cursor: pointer; -webkit-appearance: none; appearance: none;
+  background: transparent; border: 0; border-radius: 8px; box-shadow: inset 0 0 0 2px var(--line); display: inline-grid; place-content: center; transition: box-shadow 0.15s, background 0.15s;
+}
+.signup .consent input::after, input[type="checkbox"]::after { content: ""; width: 10px; height: 5px; border: solid var(--ink); border-width: 0 0 3px 3px; transform: translateY(-2px) rotate(-45deg); opacity: 0; }
+.signup .consent input:checked, input[type="checkbox"]:checked { background: var(--yellow); box-shadow: none; }
+.signup .consent input:checked::after, input[type="checkbox"]:checked::after { opacity: 1; }
+.signup .consent input:hover { box-shadow: inset 0 0 0 2px var(--yellow); }
+
+.status { margin-top: 0.9em; min-height: 1.3em; color: var(--paper-soft); }
 .status.error { color: var(--yellow); }
-.done .row, .done label { display: none; }
-.done .status { font-size: clamp(1.4rem, 2.4vw, 2.6rem); line-height: 1.15; max-width: 30ch; }
-
+.done .row, .done > label:not(.consent) { display: none; }
+.done .consent { display: none; }
+.done .status { font-size: clamp(1.4rem, 2.4vw, 2.2rem); line-height: 1.2; letter-spacing: -0.02em; max-width: 30ch; color: var(--paper); }
 .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
-@media (max-width: 560px) {
-  .signup button { flex: 1 1 100%; }
-}
+/* small print, quiet, above the closing slide */
+.fine { max-width: 62rem; padding: calc(var(--m) * 1.2) var(--m) 0; font-size: 0.875rem; line-height: 1.5; color: var(--ash); }
+.fine > span { display: block; max-width: 60ch; }
+.fine a { color: var(--paper); text-decoration: underline; text-decoration-color: var(--yellow); text-decoration-thickness: 2px; text-underline-offset: 0.2em; }
 
-/* wide screens: the title on the left, the text and the form next to it on the right */
-@media (min-width: 1100px) {
-  .split {
-    display: grid;
-    grid-template-columns: auto minmax(0, 1fr);
-    column-gap: calc(var(--F) * 5);
-    align-items: start;
-    padding: calc(var(--F) * 7) var(--F) 0;
-  }
-  .split .hero--project { padding-top: 0; --title-size: calc(var(--T) * 2.4); }
-  .split .hero--project .lockup { margin: 0; }
-  body.newsletter .split .prose { margin: 0; max-width: 40em; padding-top: calc(var(--F) * 1.5); }
-}
+@media (max-width: 560px) { .signup button.cta { flex: 1 1 100%; } }
