@@ -3,7 +3,7 @@
 Two pages, published with GitHub Pages at jergusino.com/font-tool/:
 
 - `index.html` (jergusino.com/font-tool/): leave your email, get the tool by email.
-  Every signup gets the link, whether or not the address is already in the sheet.
+  The link is mailed after the address is confirmed.
 - `tool/` (jergusino.com/font-tool/tool/): the tool itself. Upload a .ttf or .otf, it builds
   the missing Slovak (or Czech / Central European) letters from the font's own parts,
   shows a before/after preview and gives back the fixed font to download.
@@ -21,16 +21,7 @@ browser caches it.
 
 ## The email
 
-The form posts to the same Google Apps Script as the newsletter (`apps-script/Code.gs`,
-same file as in the newsletter repo), with `list=font-tool`. The script:
-
-- writes the signup into the **Subscribers** tab of the "Newsletter signups" sheet, with
-  **List** = `font-tool` (once per address; newsletter subscribers have `newsletter`),
-- emails the link to jergusino.com/font-tool/tool/ straight away, every time it is asked for,
-  even if the address is already in the sheet (no confirmation step).
-
-After changing `Code.gs`, paste it into Apps Script and deploy a **New version**
-(Deploy → Manage deployments → pencil → Version: New version).
+The form posts `list=font-tool` to the `jergusino-mail` Cloudflare Worker at `https://api.jergusino.com/subscribe` (code and setup: `tools/mail-worker/` in the jergusino.github.io repo). It sends mail through Brevo from noreply@jergusino.com and stores signups in its D1 database. The Worker mails a confirm link; after the click it mails the link to jergusino.com/font-tool/tool/ and shows it on the confirm page. The freebie text lives in `LISTS` in the Worker.
 
 ## Licences
 
