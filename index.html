@@ -77,8 +77,8 @@
   </section>
 
 <script>
-  // Google Apps Script web app (see README.md). With list: "font-tool" it emails the link to the tool right away.
-  const SHEET_URL = "https://script.google.com/macros/s/AKfycbwzb0EDm8Rme1YKbwV1A5090Xy8KaP20UOvHCXbhvao1tViq3Yg2vBaLdlMIsiN-4s/exec";
+  // Cloudflare Worker jergusino-mail (code: jergusino.github.io/tools/mail-worker). Sends through Brevo; double opt-in.
+  const API_URL = "https://api.jergusino.com/subscribe";
 
   const form = document.getElementById("signup");
   const email = document.getElementById("email");
@@ -88,7 +88,7 @@
 
   const messages = {
     invalid: "Toto nevyzerá ako e-mailová adresa. Skús niečo ako meno@gmail.com.",
-    sent: "Hotovo. Odkaz na tool ti práve odišiel e-mailom. Pozri si schránku (aj spam).",
+    sent: "Skoro hotovo. Pozri si schránku (aj spam) a potvrď e-mail. Hneď potom ti pošlem odkaz na Font Tool.",
     broken: "Niečo sa pokazilo na mojej strane. Skús to prosím neskôr.",
     offline: "Nepodarilo sa to odoslať. Skontroluj pripojenie na internet a skús to znova.",
     soon: "Prihlasovanie čoskoro spustím. Skús to o pár dní.",
@@ -103,24 +103,16 @@
     if (form.website.value) return;
     const value = email.value.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) { show("invalid", true); email.focus(); return; }
-    if (!SHEET_URL) { show("soon"); return; }
+    if (!API_URL) { show("soon"); return; }
 
     button.disabled = true;
     label.textContent = "odosielam…";
     status.textContent = "";
-    const body = new URLSearchParams({ email: value, source: location.hostname || "local", consent: "Súhlasil s posielaním súborov a noviniek e-mailom a so zdieľaním e-mailu s partnermi", list: "font-tool" });
+    const body = new URLSearchParams({ email: value, list: "font-tool", source: (location.host || "local") + location.pathname, consent: "on", consent_text: "Súhlasil s posielaním súborov a noviniek e-mailom a so zdieľaním e-mailu s partnermi", });
     try {
-      let result = "sent", res = null;
-      try {
-        res = await fetch(SHEET_URL, { method: "POST", body });
-      } catch (readError) {
-        // Some browsers block reading Google's reply; send it anyway and assume it went through.
-        await fetch(SHEET_URL, { method: "POST", mode: "no-cors", body });
-      }
-      if (res) {
-        try { result = (await res.json()).status; } catch (badReply) { result = "broken"; }
-      }
-      if (result === "invalid" || result === "broken") { show(result, true); return; }
+      const res = await fetch(API_URL, { method: "POST", body });
+      const reply = await res.json().catch(() => ({}));
+      if (!reply.ok) { show(reply.error === "bad email" ? "invalid" : reply.error === "no consent" ? "consent" : "broken", true); return; }
       form.classList.add("done");
       show("sent");
     } catch (err) {
